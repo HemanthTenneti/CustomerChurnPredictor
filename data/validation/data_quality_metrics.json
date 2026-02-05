@@ -1,0 +1,327 @@
+{
+  "dataset_info": {
+    "shape": [
+      7043,
+      21
+    ],
+    "memory_usage_mb": 6.820952415466309
+  },
+  "missing_data_analysis": {
+    "customerID": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "gender": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "SeniorCitizen": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "Partner": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "Dependents": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "tenure": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "PhoneService": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "MultipleLines": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "InternetService": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "OnlineSecurity": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "OnlineBackup": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "DeviceProtection": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "TechSupport": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "StreamingTV": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "StreamingMovies": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "Contract": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "PaperlessBilling": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "PaymentMethod": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "MonthlyCharges": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "TotalCharges": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    },
+    "Churn": {
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "recommended_strategy": "No action needed"
+    }
+  },
+  "data_type_analysis": {
+    "customerID": {
+      "current_type": "object",
+      "expected_type": "object",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "gender": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "SeniorCitizen": {
+      "current_type": "int64",
+      "expected_type": "int64",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "Partner": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "Dependents": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "tenure": {
+      "current_type": "int64",
+      "expected_type": "int64",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "PhoneService": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "MultipleLines": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "InternetService": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "OnlineSecurity": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "OnlineBackup": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "DeviceProtection": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "TechSupport": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "StreamingTV": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "StreamingMovies": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "Contract": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "PaperlessBilling": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "PaymentMethod": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "MonthlyCharges": {
+      "current_type": "float64",
+      "expected_type": "float64",
+      "issues": [],
+      "conversion_needed": false
+    },
+    "TotalCharges": {
+      "current_type": "object",
+      "expected_type": "float64",
+      "issues": [
+        "Should be numeric"
+      ],
+      "conversion_needed": true
+    },
+    "Churn": {
+      "current_type": "object",
+      "expected_type": "category",
+      "issues": [],
+      "conversion_needed": false
+    }
+  },
+  "outlier_analysis": {
+    "SeniorCitizen": {
+      "iqr_outliers": 1142,
+      "iqr_percentage": 16.21468124378816,
+      "zscore_outliers": 0,
+      "zscore_percentage": 0.0,
+      "recommendation": "Cap/transform",
+      "outlier_values_iqr": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "tenure": {
+      "iqr_outliers": 0,
+      "iqr_percentage": 0.0,
+      "zscore_outliers": 0,
+      "zscore_percentage": 0.0,
+      "recommendation": "Keep as-is",
+      "outlier_values_iqr": []
+    },
+    "MonthlyCharges": {
+      "iqr_outliers": 0,
+      "iqr_percentage": 0.0,
+      "zscore_outliers": 0,
+      "zscore_percentage": 0.0,
+      "recommendation": "Keep as-is",
+      "outlier_values_iqr": []
+    },
+    "TotalCharges": {
+      "iqr_outliers": 0,
+      "iqr_percentage": 0.0,
+      "zscore_outliers": 0,
+      "zscore_percentage": 0.0,
+      "recommendation": "Keep as-is",
+      "outlier_values_iqr": []
+    }
+  },
+  "business_logic_validation": {
+    "tenure_totalcharges": {
+      "inconsistent_count": 59,
+      "inconsistent_percentage": 0.8390216154721275,
+      "validation": "PASS"
+    },
+    "contract_tenure": {
+      "patterns": {
+        "mean": {
+          "Month-to-month": 18.036645161290323,
+          "One year": 42.044806517311606,
+          "Two year": 56.73510324483776
+        },
+        "median": {
+          "Month-to-month": 12.0,
+          "One year": 44.0,
+          "Two year": 64.0
+        },
+        "min": {
+          "Month-to-month": 1,
+          "One year": 0,
+          "Two year": 0
+        },
+        "max": {
+          "Month-to-month": 72,
+          "One year": 72,
+          "Two year": 72
+        }
+      }
+    },
+    "range_validations": {
+      "tenure_negative": 0,
+      "monthly_charges_zero": 0
+    }
+  },
+  "quality_score": 95.0
+}
