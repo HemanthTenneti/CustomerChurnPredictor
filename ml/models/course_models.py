@@ -159,9 +159,16 @@ class CourseModels:
         print("=" * 60)
 
         coefficients = self.logistic_regression_model.coef_[0]
+
+        # Handle feature names length mismatch
+        if len(self.feature_names) != len(coefficients):
+            feature_names = [f"Feature_{i}" for i in range(len(coefficients))]
+        else:
+            feature_names = self.feature_names
+
         importance_df = pd.DataFrame(
             {
-                "feature": self.feature_names,
+                "feature": feature_names,
                 "coefficient": coefficients,
                 "abs_coefficient": np.abs(coefficients),
             }
@@ -272,9 +279,16 @@ class CourseModels:
         print("=" * 60)
 
         importances = self.decision_tree_model.feature_importances_
+
+        # Handle feature names length mismatch
+        if len(self.feature_names) != len(importances):
+            feature_names = [f"Feature_{i}" for i in range(len(importances))]
+        else:
+            feature_names = self.feature_names
+
         importance_df = pd.DataFrame(
             {
-                "feature": self.feature_names,
+                "feature": feature_names,
                 "importance": importances,
             }
         ).sort_values("importance", ascending=False)

@@ -1,0 +1,91 @@
+
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+SECTION 5.1: REQUIRED EVALUATION METRICS (COURSE SPECIFIED)
+
+1. LOGISTIC REGRESSION MODEL
+--------------------------------------------------------------------------------
+Hyperparameters: {'C': 1, 'penalty': 'l2', 'solver': 'saga'}
+
+Performance Metrics:
+  • Accuracy:  0.7353
+  • Precision: 0.5008
+  • Recall:    0.7888
+  • F1-Score:  0.6127
+  • ROC-AUC:   0.8414
+
+Confusion Matrix:
+  [[741 294]
+ [ 79 295]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+          No       0.90      0.72      0.80      1035
+         Yes       0.50      0.79      0.61       374
+
+    accuracy                           0.74      1409
+   macro avg       0.70      0.75      0.71      1409
+weighted avg       0.80      0.74      0.75      1409
+
+
+2. DECISION TREE MODEL
+--------------------------------------------------------------------------------
+Hyperparameters: {'criterion': 'entropy', 'max_depth': 5, 'min_samples_split': 2}
+
+Performance Metrics:
+  • Accuracy:  0.7360
+  • Precision: 0.5017
+  • Recall:    0.7861
+  • F1-Score:  0.6125
+  • ROC-AUC:   0.8269
+
+Confusion Matrix:
+  [[743 292]
+ [ 80 294]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+          No       0.90      0.72      0.80      1035
+         Yes       0.50      0.79      0.61       374
+
+    accuracy                           0.74      1409
+   macro avg       0.70      0.75      0.71      1409
+weighted avg       0.80      0.74      0.75      1409
+
+
+3. MODEL COMPARISON SUMMARY
+--------------------------------------------------------------------------------
+Best Performing Model: Logistic Regression
+
+Performance Comparison:
+   Metric  Logistic Regression  Decision Tree
+ Accuracy             0.735273       0.735983
+Precision             0.500849       0.501706
+   Recall             0.788770       0.786096
+ F1-Score             0.612669       0.612500
+  ROC-AUC             0.841404       0.826858
+
+4. SECTION 5.1.2: PERFORMANCE VISUALIZATIONS GENERATED
+--------------------------------------------------------------------------------
+✅ Confusion matrix heatmaps (confusion_matrices.png)
+✅ ROC curves for both models (roc_curves.png)
+✅ Feature importance comparison (feature_importance_comparison.png)
+✅ Metrics comparison bar chart (metrics_comparison.png)
+
+5. ACADEMIC EVALUATION NOTES
+--------------------------------------------------------------------------------
+✅ All course-required metrics calculated (Accuracy, Precision, Recall, F1)
+✅ Confusion matrices generated for visual evaluation
+✅ ROC curves created for model comparison
+✅ Feature importance extracted from both models
+✅ Models properly compared and best model identified
+✅ Visualizations saved for presentation
+
+================================================================================
+SECTION 5 EVALUATION COMPLETE
+Report generated: 2026-02-08 23:59:11
+================================================================================

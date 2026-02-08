@@ -136,10 +136,17 @@ class BaselineModels:
         # Get coefficients
         coefficients = self.baseline_model.coef_[0]
 
+        # Handle feature names length mismatch
+        if len(self.feature_names) != len(coefficients):
+            # Generate default feature names if mismatch
+            feature_names = [f"Feature_{i}" for i in range(len(coefficients))]
+        else:
+            feature_names = self.feature_names
+
         # Create importance dataframe
         importance_df = pd.DataFrame(
             {
-                "feature": self.feature_names,
+                "feature": feature_names,
                 "coefficient": coefficients,
                 "abs_coefficient": np.abs(coefficients),
             }

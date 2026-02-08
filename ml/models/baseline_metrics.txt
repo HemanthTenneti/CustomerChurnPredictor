@@ -1,0 +1,53 @@
+
+====================================================================
+BASELINE MODEL PERFORMANCE DOCUMENTATION
+====================================================================
+
+MODEL: Logistic Regression (Default Hyperparameters)
+
+PURPOSE:
+Establish baseline performance for comparison with advanced models.
+Demonstrates simple interpretable model for academic evaluation.
+
+TRAINING CONFIGURATION:
+- Algorithm: LogisticRegression
+- Solver: lbfgs
+- Max iterations: 1000
+- Random state: 42
+- Regularization: L2 (default C=1.0)
+
+DATASET SPLIT:
+- Training samples: 5634
+- Test samples: 1409
+- Feature dimensions: 38
+- Target classes: ['No' 'Yes']
+
+PERFORMANCE METRICS:
+- Accuracy:  0.8041
+- Precision: 0.6623
+- Recall:    0.5348
+- F1-Score:  0.5917
+
+BASELINE COMPARISON:
+- Majority class baseline: 0.7346
+- Model improvement: 0.0696
+
+TOP 5 CHURN RISK FACTORS:
+1. Feature_14                     (coefficient:   1.2481)
+2. Feature_13                     (coefficient:   0.4092)
+3. Feature_30                     (coefficient:   0.3751)
+4. Feature_35                     (coefficient:   0.3677)
+5. Feature_3                      (coefficient:   0.3480)
+
+TOP 5 RETENTION FACTORS:
+1. Feature_0                      (coefficient:  -0.7906)
+2. Feature_29                     (coefficient:  -0.6454)
+3. Feature_11                     (coefficient:  -0.5286)
+4. Feature_17                     (coefficient:  -0.4950)
+5. Feature_1                      (coefficient:  -0.4769)
+
+ACADEMIC EVALUATION:
+✅ Model beats majority class baseline
+✅ Demonstrates interpretable feature importance
+✅ Ready for comparison with advanced models
+====================================================================

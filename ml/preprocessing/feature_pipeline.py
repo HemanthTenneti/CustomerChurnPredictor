@@ -365,7 +365,7 @@ class ChurnPreprocessingPipeline:
         # Store original target labels for interpretability
         self.target_labels = self.label_encoder.classes_
 
-        return X_train_processed, X_test_processed, y_train, y_test
+        return X_train_processed, X_test_processed, y_train, y_test, X_train, X_test
 
     def save_pipeline(self, pipeline_path=None):
         """Save preprocessing pipeline and components for deployment"""
@@ -396,7 +396,22 @@ class ChurnPreprocessingPipeline:
         self.handle_missing_values_and_types()
         self.create_derived_features()
         self.build_preprocessing_pipeline()
-        X_train, X_test, y_train, y_test = self.prepare_train_test_split()
+        result = self.prepare_train_test_split()
+        # Handle both old and new return formats
+        if isinstance(result, dict):
+            X_train, X_test, y_train, y_test = (
+                result["X_train"],
+                result["X_test"],
+                result["y_train"],
+                result["y_test"],
+            )
+        else:
+            X_train, X_test, y_train, y_test = (
+                result[0],
+                result[1],
+                result[2],
+                result[3],
+            )
         pipeline_path = self.save_pipeline()
 
         print("\n" + "=" * 80)
@@ -419,6 +434,8 @@ class ChurnPreprocessingPipeline:
         return {
             "X_train": self.X_train,
             "X_test": self.X_test,
+            "X_train_raw": self.X_train_raw,
+            "X_test_raw": self.X_test_raw,
             "y_train": self.y_train,
             "y_test": self.y_test,
             "preprocessing_pipeline": self.preprocessing_pipeline,
