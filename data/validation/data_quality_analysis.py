@@ -1,8 +1,3 @@
-"""
-Data Quality Assessment for Customer Churn Prediction
-Quantify data quality issues requiring preprocessing solutions
-"""
-
 import pandas as pd
 import numpy as np
 import json
@@ -14,13 +9,7 @@ import config
 
 
 class DataQualityAssessment:
-    """
-    Comprehensive data quality assessment for academic evaluation
-    Identifies and quantifies data quality issues for preprocessing planning
-    """
-
     def __init__(self, data_path=None):
-        """Initialize with dataset"""
         if data_path is None:
             data_path = config.CHURN_DATA_PATH
 
@@ -32,7 +21,6 @@ class DataQualityAssessment:
         config.create_directories()
 
     def missing_data_analysis(self):
-        """Comprehensive missing data analysis and strategy recommendation"""
         print("\n" + "=" * 60)
         print("🕳️  MISSING DATA ANALYSIS")
         print("=" * 60)
@@ -93,7 +81,6 @@ class DataQualityAssessment:
         return missing_analysis
 
     def data_type_consistency_analysis(self):
-        """Analyze data type consistency and conversion needs"""
         print("\n" + "=" * 60)
         print("🔢 DATA TYPE CONSISTENCY ANALYSIS")
         print("=" * 60)
@@ -141,7 +128,6 @@ class DataQualityAssessment:
         return type_analysis
 
     def outlier_detection_analysis(self):
-        """Comprehensive outlier detection using multiple methods"""
         print("\n" + "=" * 60)
         print("📊 OUTLIER DETECTION ANALYSIS")
         print("=" * 60)
@@ -212,7 +198,6 @@ class DataQualityAssessment:
         return outlier_analysis
 
     def business_logic_validation(self):
-        """Validate data consistency with telecommunications domain knowledge"""
         print("\n" + "=" * 60)
         print("💼 BUSINESS LOGIC VALIDATION")
         print("=" * 60)
@@ -320,7 +305,6 @@ class DataQualityAssessment:
         return validation_results
 
     def generate_quality_report(self):
-        """Generate comprehensive data quality report"""
         print("\n" + "=" * 60)
         print("📋 GENERATING DATA QUALITY REPORT")
         print("=" * 60)
@@ -363,7 +347,6 @@ class DataQualityAssessment:
     def _calculate_quality_score(
         self, missing_analysis, type_analysis, outlier_analysis, business_validation
     ):
-        """Calculate overall data quality score (0-100)"""
         score = 100.0
 
         # Deduct for missing data
@@ -394,7 +377,6 @@ class DataQualityAssessment:
         return max(0, score)
 
     def _print_quality_summary(self, report):
-        """Print executive summary of data quality"""
         print("\n" + "=" * 60)
         print("📊 DATA QUALITY SUMMARY")
         print("=" * 60)

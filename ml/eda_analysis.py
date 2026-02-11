@@ -14,13 +14,7 @@ import config
 
 
 class ChurnEDA:
-    """
-    Comprehensive EDA class for academic evaluation
-    Demonstrates quality data analysis skills expected in coursework
-    """
-
     def __init__(self, data_path=None):
-        """Initialize EDA with data loading"""
         if data_path is None:
             data_path = config.CHURN_DATA_PATH
 
@@ -32,7 +26,6 @@ class ChurnEDA:
         config.create_directories()
 
     def basic_data_info(self):
-        """Generate basic dataset information for academic review"""
         print("\n" + "=" * 60)
         print("📋 BASIC DATASET INFORMATION")
         print("=" * 60)
@@ -56,7 +49,6 @@ class ChurnEDA:
         return self.df.info()
 
     def target_variable_analysis(self):
-        """Analyze target variable for academic evaluation"""
         print("\n" + "=" * 60)
         print("🎯 TARGET VARIABLE ANALYSIS (Churn)")
         print("=" * 60)
@@ -97,7 +89,6 @@ class ChurnEDA:
         }
 
     def categorical_variables_analysis(self):
-        """Analyze categorical variables for academic presentation"""
         print("\n" + "=" * 60)
         print("📊 CATEGORICAL VARIABLES ANALYSIS")
         print("=" * 60)
@@ -137,7 +128,6 @@ class ChurnEDA:
         return categorical_summary
 
     def numerical_variables_analysis(self):
-        """Analyze numerical variables for academic evaluation"""
         print("\n" + "=" * 60)
         print("📈 NUMERICAL VARIABLES ANALYSIS")
         print("=" * 60)
@@ -220,7 +210,6 @@ class ChurnEDA:
         return numerical_summary
 
     def correlation_analysis(self):
-        """Generate correlation analysis for numerical features"""
         print("\n" + "=" * 60)
         print("🔗 CORRELATION ANALYSIS")
         print("=" * 60)
@@ -261,7 +250,6 @@ class ChurnEDA:
         return {"correlation_matrix": corr_matrix, "high_correlations": high_corr_pairs}
 
     def generate_visualizations(self):
-        """Generate EDA visualizations for academic presentation"""
         print("\n" + "=" * 60)
         print("📊 GENERATING EDA VISUALIZATIONS")
         print("=" * 60)
@@ -352,7 +340,6 @@ class ChurnEDA:
         return str(plots_dir)
 
     def run_full_eda(self):
-        """Execute complete EDA analysis for academic evaluation"""
         print("🚀 STARTING COMPREHENSIVE EDA ANALYSIS")
         print("=" * 80)
 
