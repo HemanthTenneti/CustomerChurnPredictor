@@ -309,7 +309,7 @@ def predict(*args):
     md = (
         f'<div style="text-align:center;padding:16px 0 12px;">'
         f'<span style="font-size:1.5rem;font-weight:700;color:{lc};letter-spacing:.06em;">{label}</span><br>'
-        f'<span style="color:#000000;font-size:0.82rem;margin-top:6px;display:inline-block;">'
+        f'<span style="color:#6b7280;font-size:0.82rem;margin-top:6px;display:inline-block;">'
         f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:{rc}">{prob * 100:.1f}%</b></span></div>'
     )
     return md, make_gauge(prob)
@@ -430,7 +430,7 @@ def run_agent_with_rag(
             f"color:{c};display:flex;align-items:center;justify-content:center;"
             f"font-weight:700;font-size:0.85rem;border:1px solid {c}25;"
             f'">{i}</div>'
-            f'<div style="flex:1;color:#000000;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
+            f'<div style="flex:1;color:#1f2937;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
         )
 
     output = f"""
@@ -450,8 +450,8 @@ def run_agent_with_rag(
 
       <!-- Risk Factors -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.7rem;
-                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:700;">
+        <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;">
           <span style="color:#6d28d9;display:flex;">{SVG["risk"]}</span> Identified Risk Factors
         </div>
         <div style="line-height:2.4;">{factors_html}</div>
@@ -460,19 +460,19 @@ def run_agent_with_rag(
       <!-- Explanation -->
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;
                   padding:24px;margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.7rem;
-                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:700;">
+        <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;">
           <span style="color:#6d28d9;display:flex;">{SVG["brain"]}</span> Why This Customer Is at Risk
         </div>
-        <div style="color:#000000;font-size:0.92rem;line-height:1.75;">
+        <div style="color:#1f2937;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
         </div>
       </div>
 
       <!-- Recommendations -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.7rem;
-                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;font-weight:700;">
+        <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;font-weight:600;">
           <span style="color:#6d28d9;display:flex;">{SVG["lightbulb"]}</span> Recommended Retention Actions
         </div>
         {recs_html}
@@ -481,11 +481,11 @@ def run_agent_with_rag(
       <!-- Executive Summary -->
       <div style="background:#faf5ff;border-left:3px solid #7c3aed;border-radius:0 10px 10px 0;
                   padding:18px 24px;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.65rem;
-                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:700;">
+        <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.65rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:600;">
           <span style="color:#6d28d9;display:flex;">{SVG["target"]}</span> Executive Summary
         </div>
-        <div style="color:#000000;font-size:0.9rem;line-height:1.65;font-style:italic;">
+        <div style="color:#1f2937;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
         </div>
       </div>
@@ -502,31 +502,16 @@ def run_agent_with_rag(
 css = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+:root {
+    --col: #1f2937 !important;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 body, .gradio-container, gradio-app, .wrap {
     background: #ffffff !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-    color: #000000 !important;
-    --block-title-text-color: #000000 !important;
-    --block-label-text-color: #000000 !important;
 }
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   CRITICAL: Fix Gradio label colors to BLACK - must be early in CSS
-   ══════════════════════════════════════════════════════════════════════════════ */
-:root, body, .gradio-container {
-    --block-title-text-color: #000000 !important;
-    --block-label-text-color: #000000 !important;
-    --block-title-text-weight: 700 !important;
-    --block-label-text-weight: 700 !important;
-}
-
-body span[data-testid="block-info"] { color: #000000 !important; }
-body .svelte-jdcl7l { color: #000000 !important; font-weight: 700 !important; }
-span[data-testid="block-info"] { color: #000000 !important; }
-.svelte-jdcl7l { color: #000000 !important; font-weight: 700 !important; }
-[class*="svelte"][data-testid="block-info"] { color: #000000 !important; }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
 #app-header {
@@ -534,18 +519,18 @@ span[data-testid="block-info"] { color: #000000 !important; }
     border-bottom: 1px solid #e2e8f0;
 }
 #app-header h1 {
-    margin: 0; font-size: 1.6rem; font-weight: 800; color: #000000;
+    margin: 0; font-size: 1.6rem; font-weight: 800; color: #1f2937;
     letter-spacing: -.02em;
 }
 #app-header p {
-    margin: 10px 0 0; font-size: 0.78rem; color: #000000;
+    margin: 10px 0 0; font-size: 0.78rem; color: #6b7280;
     font-weight: 500; letter-spacing: .04em;
 }
 
 /* ── Panels ────────────────────────────────────────────────────────────── */
 .gr-group, .gr-box, .block {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
     border-radius: 12px !important;
 }
 
@@ -553,19 +538,19 @@ span[data-testid="block-info"] { color: #000000 !important; }
 .tab-nav button {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
-    color: #666666 !important; background: transparent !important;
+    color: #9ca3af !important; background: transparent !important;
     border: none !important; border-bottom: 2px solid transparent !important;
     padding: 12px 28px !important; border-radius: 0 !important;
     text-transform: uppercase; letter-spacing: .08em;
     transition: color .2s, border-color .2s;
 }
 .tab-nav button.selected {
-    color: #000000 !important;
+    color: #1f2937 !important;
     border-bottom-color: #6366f1 !important;
     background: transparent !important;
 }
 .tab-nav button:hover {
-    color: #000000 !important; background: transparent !important;
+    color: #6b7280 !important; background: transparent !important;
 }
 .tabitem { padding: 14px 0 0 !important; }
 
@@ -578,27 +563,13 @@ span[data-testid="block-info"] { color: #000000 !important; }
     border-bottom-color: #7c3aed !important; color: #6366f1 !important;
 }
 
-/* ── Labels ────────────────────────────────────────────────────────────── */
-label, label span, .label-wrap, .label-wrap span,
-.block > label, .block > label > span,
-.block label, .block label span,
-.form label, .form label span,
-span.svelte-1gfkn6j, span.svelte-1b6s6vi,
-[class*="label"] {
-    font-family: 'Inter', system-ui, sans-serif !important;
-    font-size: 0.72rem !important;
-    color: #000000 !important;
-    text-transform: uppercase; letter-spacing: .05em;
-    font-weight: 700 !important;
-}
-
 /* ── Inputs ────────────────────────────────────────────────────────────── */
 input[type="number"], input[type="text"], textarea, select,
 .gr-input input, .gr-dropdown select {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #e5e7eb !important;
     border-radius: 10px !important;
-    color: #000000 !important;
+    color: #1f2937 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.85rem !important;
     text-transform: none !important; letter-spacing: 0 !important;
@@ -613,7 +584,7 @@ ul[role="listbox"], ul[role="listbox"] li,
 .multiselect span, input.svelte-1gfkn6j,
 [data-testid="dropdown"] input, [data-testid="dropdown"] span {
     text-transform: none !important; letter-spacing: 0 !important;
-    font-size: 0.85rem !important; color: #000000 !important;
+    font-size: 0.85rem !important; color: #1f2937 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
 }
 
@@ -634,8 +605,8 @@ ul[role="listbox"], ul[role="listbox"] li,
 
 /* ── Predict Button ────────────────────────────────────────────────────── */
 .predict-btn {
-    background: #f8fafc !important; color: #000000 !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important; color: #1f2937 !important;
+    border: 1px solid #e5e7eb !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
     border-radius: 10px !important; padding: 12px 0 !important;
@@ -643,28 +614,28 @@ ul[role="listbox"], ul[role="listbox"] li,
     transition: all .2s;
 }
 .predict-btn:hover {
-    background: #f1f5f9 !important; border-color: #cbd5e1 !important;
-    color: #000000 !important;
+    background: #f3f4f6 !important; border-color: #d1d5db !important;
+    color: #1f2937 !important;
 }
 
 /* ── Example Buttons ───────────────────────────────────────────────────── */
 .ex-btn {
-    background: #f8fafc !important; color: #000000 !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important; color: #1f2937 !important;
+    border: 1px solid #e5e7eb !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.72rem !important; border-radius: 10px !important;
     padding: 7px 10px !important; flex: 1 !important;
     transition: all .15s; font-weight: 600;
 }
 .ex-btn:hover {
-    color: #000000 !important; border-color: #cbd5e1 !important;
-    background: #f1f5f9 !important;
+    color: #1f2937 !important; border-color: #d1d5db !important;
+    background: #f3f4f6 !important;
 }
 
 /* ── Agent Output ──────────────────────────────────────────────────────── */
 .agent-output {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #e5e7eb !important;
     border-radius: 14px !important;
     padding: 12px 32px 32px 32px !important;
     min-height: 420px;
@@ -673,7 +644,7 @@ ul[role="listbox"], ul[role="listbox"] li,
 
 /* ── Result Box ────────────────────────────────────────────────────────── */
 #result-box {
-    background: #f8fafc !important; border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important; border: 1px solid #e5e7eb !important;
     border-radius: 12px !important; min-height: 78px;
 }
 
@@ -683,97 +654,59 @@ ul[role="listbox"], ul[role="listbox"] li,
 /* ── Section Labels ────────────────────────────────────────────────────── */
 .slabel {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.65rem; color: #000000;
-    text-transform: uppercase; letter-spacing: .12em; font-weight: 700;
-    padding: 4px 0 8px; border-bottom: 1px solid #e2e8f0; margin-bottom: 10px;
+    font-size: 0.65rem; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .12em; font-weight: 600;
+    padding: 4px 0 8px; border-bottom: 1px solid #e5e7eb; margin-bottom: 10px;
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 5px; }
-::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
 
 /* ── Gradio built-in overrides ─────────────────────────────────────────── */
 footer { display: none !important; }
 
-/* ── AGGRESSIVE LABEL & TEXT FIXES FOR GRADIO ──────────────────────────── */
-/* Target Gradio's Svelte-generated classes for form labels */
-span.has-info.svelte-jdcl7l { 
-    color: #000000 !important; 
-    font-weight: 700 !important;
-}
-
-span.svelte-jdcl7l { 
-    color: #000000 !important; 
-    font-weight: 700 !important;
-}
-
+/* ── FINAL GRADIO TEXT OVERRIDES ────────────────────────────────────────── */
+/* Form labels (secondary text) */
 span[data-testid="block-info"] { 
-    color: #000000 !important; 
-    font-weight: 700 !important;
+    color: #6b7280 !important; 
+    font-weight: 500 !important;
 }
 
-/* Dropdown & select elements */
+/* Dropdown values (primary text) */
 input[role="listbox"] { 
-    color: #000000 !important; 
+    color: #1f2937 !important; 
+    font-weight: 400 !important;
 }
 
-/* Dropdown options */
-[role="option"] { 
-    color: #000000 !important; 
-}
+[role="option"],
 li[role="option"] { 
-    color: #000000 !important; 
+    color: #1f2937 !important; 
 }
 
-/* Gradio-specific input text colors */
-.gr-input input,
-.gr-dropdown select,
-.gr-textbox textarea { 
-    color: #000000 !important; 
-}
-
-/* Tab button text */
+/* Tab buttons */
 button[role="tab"] { 
-    color: #000000 !important; 
+    color: #9ca3af !important; 
+    font-weight: 500 !important;
 }
 button[role="tab"][aria-selected="true"] { 
-    color: #000000 !important; 
-    font-weight: 700 !important;
+    color: #1f2937 !important; 
+    font-weight: 600 !important;
 }
 
 /* Accordion headers */
 .gr-accordion-header { 
-    color: #000000 !important; 
+    color: #1f2937 !important; 
 }
 
 /* Radio & checkbox labels */
 .gr-radio-group label,
 .gr-checkbox-group label { 
-    color: #000000 !important; 
+    color: #6b7280 !important; 
+    font-weight: 500 !important;
 }
-
-/* Svelte scope classes (Gradio form elements) */
-.svelte-jdcl7l,
-.svelte-1xfsv4t,
-.svelte-11gaq1 { 
-    color: #000000 !important; 
-    font-weight: 700 !important;
-}
-
-/* FINAL OVERRIDE - use [attr] selectors which have higher specificity */
-[data-testid="block-info"] { 
-    color: #000000 !important;
-    font-weight: 700 !important;
-}
-
-/* Force all text to black at the end */
-* { 
-    --text-color-primary: #000000 !important;
-}
-
-/* END OF CSS */
 """
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -793,23 +726,24 @@ theme = gr.themes.Base(
         "sans-serif",
     ],
 ).set(
-    # PRIMARY TEXT (Labels, headings) - CRITICAL: Set to pure black
-    block_label_text_color="#000000",
-    block_label_text_color_dark="#000000",
-    block_label_text_weight="700",
-    block_title_text_color="#000000",
-    block_title_text_color_dark="#000000",
-    block_title_text_weight="700",
-    body_text_color="#000000",
-    body_text_color_dark="#000000",
+    # PRIMARY TEXT (Form values, body content) - Dark/Black for readability
+    body_text_color="#1f2937",
+    body_text_color_dark="#f3f4f6",
     body_text_weight="400",
+    # SECONDARY TEXT (Form labels, instructions) - Medium gray
+    block_label_text_color="#6b7280",
+    block_label_text_color_dark="#d1d5db",
+    block_label_text_weight="500",
+    block_title_text_color="#6b7280",
+    block_title_text_color_dark="#d1d5db",
+    block_title_text_weight="500",
     # BORDERS & BACKGROUNDS (Keep light for contrast)
-    border_color_primary="#e2e8f0",
-    border_color_primary_dark="#334155",
+    border_color_primary="#e5e7eb",
+    border_color_primary_dark="#374151",
     background_fill_primary="#ffffff",
-    background_fill_primary_dark="#1e293b",
-    block_background_fill="#f8fafc",
-    block_background_fill_dark="#0f172a",
+    background_fill_primary_dark="#1f2937",
+    block_background_fill="#f9fafb",
+    block_background_fill_dark="#111827",
 )
 
 
@@ -983,11 +917,11 @@ with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
             with gr.Column(scale=6, min_width=420):
                 gr.HTML('<div class="slabel">Analysis Report</div>')
                 agent_output = gr.HTML(
-                    value='<div style="text-align:center;color:#000000;padding:100px 24px;'
+                    value='<div style="text-align:center;color:#6b7280;padding:100px 24px;'
                     'font-family:system-ui;font-size:0.88rem;line-height:1.8;">'
-                    '<div style="font-size:2rem;margin-bottom:12px;opacity:.3;">'
+                    '<div style="font-size:2rem;margin-bottom:12px;opacity:.5;">'
                     + SVG["agent"]
-                    .replace('stroke="currentColor"', 'stroke="#000000"')
+                    .replace('stroke="currentColor"', 'stroke="#9ca3af"')
                     .replace('width="18"', 'width="36"')
                     .replace('height="18"', 'height="36"')
                     + "</div>"
@@ -1030,7 +964,7 @@ with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
                 gr.HTML('<div class="slabel">Churn Risk Gauge</div>')
                 gauge_plot = gr.Plot(show_label=False, elem_id="gauge-plot")
                 result_box = gr.Markdown(
-                    value='<div style="text-align:center;color:#000000;padding:20px 0;'
+                    value='<div style="text-align:center;color:#6b7280;padding:20px 0;'
                     'font-size:0.82rem;">run prediction to see result</div>',
                     elem_id="result-box",
                 )
