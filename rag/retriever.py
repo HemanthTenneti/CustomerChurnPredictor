@@ -1,8 +1,8 @@
 """RAG retriever — queries the ChromaDB vector store for relevant retention strategies."""
 
 import os
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 
 CHROMA_DIR = os.path.join(os.path.dirname(__file__), "chroma_db")
 

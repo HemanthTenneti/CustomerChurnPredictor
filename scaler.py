@@ -15,8 +15,8 @@ def build_scaler() -> StandardScaler:
     df = pd.read_csv(os.path.join(dataset_path, csv_file))
 
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
-    df["TotalCharges"].fillna(df["TotalCharges"].median(), inplace=True)
-    df.drop(columns=["customerID"], inplace=True)
+    df["TotalCharges"] = df["TotalCharges"].fillna(df["TotalCharges"].median())
+    df = df.drop(columns=["customerID"])
     df["Churn"] = df["Churn"].map({"Yes": 1, "No": 0})
 
     cat_cols = df.select_dtypes(include=["object"]).columns.tolist()
