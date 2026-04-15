@@ -214,12 +214,7 @@ def encode_input(
     return scaler.transform(np.array([list(row.values())], dtype=float))
 
 
-RISK_COLORS = {"High": "#f43f5e", "Medium": "#f59e0b", "Low": "#10b981"}
-RISK_GLOWS = {
-    "High": "rgba(244,63,94,.25)",
-    "Medium": "rgba(245,158,11,.2)",
-    "Low": "rgba(16,185,129,.2)",
-}
+RISK_COLORS = {"High": "#e11d48", "Medium": "#d97706", "Low": "#059669"}
 
 
 # ── SVG Icons (Lucide-style, no external deps) ──────────────────────────────
@@ -238,9 +233,9 @@ SVG = {
 
 
 def make_gauge(prob: float) -> plt.Figure:
-    fc = "#f43f5e" if prob >= 0.7 else "#f59e0b" if prob >= 0.4 else "#10b981"
-    fig, ax = plt.subplots(figsize=(4.0, 2.5), facecolor="#0c0e16")
-    ax.set_facecolor("#0c0e16")
+    fc = "#e11d48" if prob >= 0.7 else "#d97706" if prob >= 0.4 else "#059669"
+    fig, ax = plt.subplots(figsize=(4.0, 2.5), facecolor="#ffffff")
+    ax.set_facecolor("#ffffff")
     ax.add_patch(
         Wedge(
             (0, 0),
@@ -248,8 +243,8 @@ def make_gauge(prob: float) -> plt.Figure:
             0,
             180,
             width=0.32,
-            facecolor="#1e1e30",
-            edgecolor="#2a2a44",
+            facecolor="#f1f5f9",
+            edgecolor="#e2e8f0",
             lw=1.0,
         )
     )
@@ -272,15 +267,15 @@ def make_gauge(prob: float) -> plt.Figure:
         "",
         xy=(0.74 * math.cos(ar), 0.74 * math.sin(ar)),
         xytext=(0, 0),
-        arrowprops=dict(arrowstyle="-|>", color="#a5a5c0", lw=1.8, mutation_scale=12),
+        arrowprops=dict(arrowstyle="-|>", color="#64748b", lw=1.8, mutation_scale=12),
     )
-    ax.plot(0, 0, "o", color="#a5a5c0", markersize=4.5, zorder=5)
+    ax.plot(0, 0, "o", color="#64748b", markersize=4.5, zorder=5)
     for p, l in [(-1.05, "0%"), (0, "50%"), (1.05, "100%")]:
         ax.text(
             p,
             1.12 if l == "50%" else -0.10,
             l,
-            color="#555570",
+            color="#94a3b8",
             fontsize=7,
             ha="center",
             fontfamily="monospace",
@@ -310,12 +305,12 @@ def predict(*args):
     label = "CHURN" if pred == 1 else "NO CHURN"
     risk = "High" if prob >= 0.7 else ("Medium" if prob >= 0.4 else "Low")
     rc = RISK_COLORS[risk]
-    lc = "#f43f5e" if pred == 1 else "#10b981"
+    lc = "#e11d48" if pred == 1 else "#059669"
     md = (
         f'<div style="text-align:center;padding:16px 0 12px;">'
         f'<span style="font-size:1.5rem;font-weight:700;color:{lc};letter-spacing:.06em;">{label}</span><br>'
-        f'<span style="color:#a5a5c0;font-size:0.82rem;margin-top:6px;display:inline-block;">'
-        f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:#e4e4f0">{prob * 100:.1f}%</b></span></div>'
+        f'<span style="color:#64748b;font-size:0.82rem;margin-top:6px;display:inline-block;">'
+        f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:#1e293b">{prob * 100:.1f}%</b></span></div>'
     )
     return md, make_gauge(prob)
 
@@ -347,12 +342,12 @@ def fill_example(idx: int):
 
 def _no_key_error(msg=""):
     return (
-        f'<div style="background:#1a0a1e;border:1px solid #a855f733;border-radius:12px;'
-        f'padding:32px;font-family:system-ui;color:#c084fc;text-align:center;">'
+        f'<div style="background:#faf5ff;border:1px solid #d8b4fe;border-radius:12px;'
+        f'padding:32px;font-family:system-ui;color:#7c3aed;text-align:center;">'
         f'<div style="font-size:1.2rem;font-weight:700;margin-bottom:12px;">Agent Unavailable</div>'
-        f'<div style="font-size:0.85rem;color:#a78bfa;">'
+        f'<div style="font-size:0.85rem;color:#8b5cf6;">'
         f"{'Error: ' + msg + '<br><br>' if msg else ''}"
-        f'Set your <code style="background:#2a1040;padding:2px 8px;border-radius:4px;">GROQ_API_KEY</code> in <code style="background:#2a1040;padding:2px 8px;border-radius:4px;">.env</code></div></div>'
+        f'Set your <code style="background:#f3e8ff;padding:2px 8px;border-radius:4px;">GROQ_API_KEY</code> in <code style="background:#f3e8ff;padding:2px 8px;border-radius:4px;">.env</code></div></div>'
     ), ""
 
 
@@ -412,54 +407,50 @@ def run_agent_with_rag(
 
     prob = state["churn_probability"]
     risk = state["risk_level"]
-    rc = RISK_COLORS.get(risk, "#a5a5c0")
-    glow = RISK_GLOWS.get(risk, "rgba(165,165,192,.15)")
+    rc = RISK_COLORS.get(risk, "#64748b")
 
     factors_html = ""
     for f in state.get("risk_factors", []):
         factors_html += (
             f'<span style="display:inline-flex;align-items:center;gap:5px;'
-            f"background:{rc}15;color:{rc};border:1px solid {rc}40;"
+            f"background:{rc}10;color:{rc};border:1px solid {rc}30;"
             f"border-radius:20px;padding:5px 14px;margin:3px 4px;"
-            f'font-size:0.78rem;font-weight:500;backdrop-filter:blur(4px);">'
+            f'font-size:0.78rem;font-weight:500;">'
             f"{SVG['zap']}{f}</span>"
         )
 
     recs = state.get("recommendations", [])
     recs_html = ""
     for i, r in enumerate(recs, 1):
-        colors = ["#6366f1", "#8b5cf6", "#a855f7"]
+        colors = ["#6366f1", "#7c3aed", "#9333ea"]
         c = colors[(i - 1) % 3]
         recs_html += (
             f'<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;">'
-            f'<div style="min-width:34px;height:34px;border-radius:10px;background:{c}18;'
+            f'<div style="min-width:34px;height:34px;border-radius:10px;background:{c}10;'
             f"color:{c};display:flex;align-items:center;justify-content:center;"
-            f"font-weight:700;font-size:0.85rem;border:1px solid {c}33;"
-            f'box-shadow:0 0 12px {c}15;">{i}</div>'
-            f'<div style="flex:1;color:#d4d4e8;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
+            f"font-weight:700;font-size:0.85rem;border:1px solid {c}25;"
+            f'">{i}</div>'
+            f'<div style="flex:1;color:#334155;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
         )
 
     output = f"""
     <div style="font-family:'Inter',system-ui,-apple-system,sans-serif;">
 
       <!-- Risk Score -->
-      <div style="text-align:center;padding:28px 0 20px;position:relative;">
-        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,{glow} 0%,transparent 70%);pointer-events:none;"></div>
-        <div style="position:relative;font-size:3.2rem;font-weight:800;color:{rc};
-                    letter-spacing:-.03em;text-shadow:0 0 40px {glow};">{prob:.1%}</div>
-        <div style="position:relative;margin-top:8px;">
-          <span style="background:{rc}20;color:{rc};border:1px solid {rc}55;
+      <div style="text-align:center;padding:32px 0 24px;">
+        <div style="font-size:3.2rem;font-weight:800;color:{rc};letter-spacing:-.03em;">{prob:.1%}</div>
+        <div style="margin-top:8px;">
+          <span style="background:{rc}12;color:{rc};border:1px solid {rc}35;
                 border-radius:8px;padding:6px 20px;font-size:0.88rem;
-                font-weight:700;letter-spacing:.06em;
-                box-shadow:0 0 16px {glow};">{risk.upper()} RISK</span>
+                font-weight:700;letter-spacing:.06em;">{risk.upper()} RISK</span>
         </div>
       </div>
 
-      <div style="height:1px;background:linear-gradient(90deg,transparent,#2a2a44,transparent);margin:0 0 24px;"></div>
+      <div style="height:1px;background:#e2e8f0;margin:0 0 28px;"></div>
 
       <!-- Risk Factors -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.68rem;
+        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.68rem;
                     text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600;">
           <span style="color:{rc};">{SVG["risk"]}</span> Identified Risk Factors
         </div>
@@ -467,21 +458,20 @@ def run_agent_with_rag(
       </div>
 
       <!-- Explanation -->
-      <div style="background:linear-gradient(135deg,#14142a,#1a1a36);border:1px solid #2a2a50;
-                  border-radius:12px;padding:22px 24px;margin-bottom:28px;
-                  box-shadow:0 4px 24px rgba(0,0,0,.2);">
-        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.68rem;
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;
+                  padding:24px;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.68rem;
                     text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600;">
-          <span style="color:#a78bfa;">{SVG["brain"]}</span> Why This Customer Is at Risk
+          <span style="color:#7c3aed;">{SVG["brain"]}</span> Why This Customer Is at Risk
         </div>
-        <div style="color:#d4d4e8;font-size:0.92rem;line-height:1.75;">
+        <div style="color:#334155;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
         </div>
       </div>
 
       <!-- Recommendations -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.68rem;
+        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.68rem;
                     text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px;font-weight:600;">
           <span style="color:#6366f1;">{SVG["lightbulb"]}</span> Recommended Retention Actions
         </div>
@@ -489,14 +479,13 @@ def run_agent_with_rag(
       </div>
 
       <!-- Executive Summary -->
-      <div style="background:linear-gradient(90deg,#6366f115,transparent);
-                  border-left:3px solid #6366f1;border-radius:0 10px 10px 0;
-                  padding:16px 22px;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.65rem;
+      <div style="background:#faf5ff;border-left:3px solid #7c3aed;border-radius:0 10px 10px 0;
+                  padding:18px 24px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.65rem;
                     text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:600;">
-          <span style="color:#818cf8;">{SVG["target"]}</span> Executive Summary
+          <span style="color:#7c3aed;">{SVG["target"]}</span> Executive Summary
         </div>
-        <div style="color:#e4e4f0;font-size:0.9rem;line-height:1.65;font-style:italic;">
+        <div style="color:#1e293b;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
         </div>
       </div>
@@ -507,7 +496,7 @@ def run_agent_with_rag(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STYLING — Vibrant dark theme with indigo/violet accents
+# STYLING — Clean white theme
 # ══════════════════════════════════════════════════════════════════════════════
 
 css = """
@@ -516,22 +505,19 @@ css = """
 *, *::before, *::after { box-sizing: border-box; }
 
 body, .gradio-container, gradio-app, .wrap {
-    background: #0c0e16 !important;
+    background: #ffffff !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-    color: #e4e4f0 !important;
+    color: #1e293b !important;
 }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
 #app-header {
     text-align: center; padding: 30px 0 20px; margin-bottom: 20px;
-    border-bottom: 1px solid #2a2a44;
-    background: linear-gradient(180deg, #12122a 0%, transparent 100%);
+    border-bottom: 1px solid #e2e8f0;
 }
 #app-header h1 {
-    margin: 0; font-size: 1.6rem; font-weight: 800; color: #f0f0ff;
+    margin: 0; font-size: 1.6rem; font-weight: 800; color: #0f172a;
     letter-spacing: -.02em;
-    background: linear-gradient(135deg, #e4e4f0, #a5b4fc);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 #app-header p {
     margin: 10px 0 0; font-size: 0.78rem; color: #6366f1;
@@ -540,8 +526,8 @@ body, .gradio-container, gradio-app, .wrap {
 
 /* ── Panels ────────────────────────────────────────────────────────────── */
 .gr-group, .gr-box, .block {
-    background: #12122a !important;
-    border: 1px solid #2a2a50 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important;
 }
 
@@ -549,19 +535,19 @@ body, .gradio-container, gradio-app, .wrap {
 .tab-nav button {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
-    color: #555575 !important; background: transparent !important;
+    color: #94a3b8 !important; background: transparent !important;
     border: none !important; border-bottom: 2px solid transparent !important;
     padding: 12px 28px !important; border-radius: 0 !important;
     text-transform: uppercase; letter-spacing: .08em;
     transition: color .2s, border-color .2s;
 }
 .tab-nav button.selected {
-    color: #e4e4f0 !important;
+    color: #1e293b !important;
     border-bottom-color: #6366f1 !important;
     background: transparent !important;
 }
 .tab-nav button:hover {
-    color: #a5a5c0 !important; background: transparent !important;
+    color: #64748b !important; background: transparent !important;
 }
 .tabitem { padding: 14px 0 0 !important; }
 
@@ -571,7 +557,7 @@ body, .gradio-container, gradio-app, .wrap {
     letter-spacing: .06em;
 }
 .tabitem .tab-nav button.selected {
-    border-bottom-color: #818cf8 !important; color: #c4b5fd !important;
+    border-bottom-color: #7c3aed !important; color: #6366f1 !important;
 }
 
 /* ── Labels ────────────────────────────────────────────────────────────── */
@@ -583,7 +569,7 @@ span.svelte-1gfkn6j, span.svelte-1b6s6vi,
 [class*="label"] {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.72rem !important;
-    color: #8888a8 !important;
+    color: #64748b !important;
     text-transform: uppercase; letter-spacing: .05em;
     font-weight: 500 !important;
 }
@@ -591,10 +577,10 @@ span.svelte-1gfkn6j, span.svelte-1b6s6vi,
 /* ── Inputs ────────────────────────────────────────────────────────────── */
 input[type="number"], input[type="text"], textarea, select,
 .gr-input input, .gr-dropdown select {
-    background: #0c0e16 !important;
-    border: 1px solid #2a2a50 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
-    color: #e4e4f0 !important;
+    color: #1e293b !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.85rem !important;
     text-transform: none !important; letter-spacing: 0 !important;
@@ -603,38 +589,35 @@ input[type="number"], input[type="text"], textarea, select,
 input:focus, select:focus, textarea:focus {
     border-color: #6366f1 !important;
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,.15) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.1) !important;
 }
 ul[role="listbox"], ul[role="listbox"] li,
 .multiselect span, input.svelte-1gfkn6j,
 [data-testid="dropdown"] input, [data-testid="dropdown"] span {
     text-transform: none !important; letter-spacing: 0 !important;
-    font-size: 0.85rem !important; color: #e4e4f0 !important;
+    font-size: 0.85rem !important; color: #1e293b !important;
     font-family: 'Inter', system-ui, sans-serif !important;
 }
 
 /* ── Agent Button ──────────────────────────────────────────────────────── */
 .agent-btn {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    background: #6366f1 !important;
     color: #fff !important;
     border: none !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.88rem !important; font-weight: 700 !important;
     border-radius: 12px !important; padding: 14px 0 !important;
     letter-spacing: .03em; width: 100% !important;
-    transition: all .25s; cursor: pointer;
-    box-shadow: 0 4px 24px rgba(99,102,241,.3);
+    transition: background .2s;
 }
 .agent-btn:hover {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-    box-shadow: 0 6px 32px rgba(99,102,241,.45);
-    transform: translateY(-1px);
+    background: #4f46e5 !important;
 }
 
 /* ── Predict Button ────────────────────────────────────────────────────── */
 .predict-btn {
-    background: #12122a !important; color: #a5a5c0 !important;
-    border: 1px solid #2a2a50 !important;
+    background: #f8fafc !important; color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
     border-radius: 10px !important; padding: 12px 0 !important;
@@ -642,40 +625,37 @@ ul[role="listbox"], ul[role="listbox"] li,
     transition: all .2s;
 }
 .predict-btn:hover {
-    background: #1a1a3a !important; border-color: #6366f155 !important;
-    color: #e4e4f0 !important;
-    box-shadow: 0 0 16px rgba(99,102,241,.1);
+    background: #f1f5f9 !important; border-color: #cbd5e1 !important;
+    color: #334155 !important;
 }
 
 /* ── Example Buttons ───────────────────────────────────────────────────── */
 .ex-btn {
-    background: #12122a !important; color: #8888a8 !important;
-    border: 1px solid #2a2a50 !important;
+    background: #f8fafc !important; color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.72rem !important; border-radius: 10px !important;
     padding: 7px 10px !important; flex: 1 !important;
-    transition: all .2s; font-weight: 500;
+    transition: all .15s; font-weight: 500;
 }
 .ex-btn:hover {
-    color: #e4e4f0 !important; border-color: #6366f155 !important;
-    background: #1a1a3a !important;
-    box-shadow: 0 0 12px rgba(99,102,241,.08);
+    color: #334155 !important; border-color: #cbd5e1 !important;
+    background: #f1f5f9 !important;
 }
 
 /* ── Agent Output ──────────────────────────────────────────────────────── */
 .agent-output {
-    background: #0c0e16 !important;
-    border: 1px solid #2a2a50 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 14px !important;
-    padding: 0 24px !important;
+    padding: 12px 32px 32px 32px !important;
     min-height: 420px;
     overflow-y: auto;
-    box-shadow: inset 0 2px 12px rgba(0,0,0,.2);
 }
 
 /* ── Result Box ────────────────────────────────────────────────────────── */
 #result-box {
-    background: #12122a !important; border: 1px solid #2a2a50 !important;
+    background: #f8fafc !important; border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important; min-height: 78px;
 }
 
@@ -685,16 +665,16 @@ ul[role="listbox"], ul[role="listbox"] li,
 /* ── Section Labels ────────────────────────────────────────────────────── */
 .slabel {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.65rem; color: #555575;
+    font-size: 0.65rem; color: #94a3b8;
     text-transform: uppercase; letter-spacing: .12em; font-weight: 600;
-    padding: 4px 0 8px; border-bottom: 1px solid #1e1e38; margin-bottom: 10px;
+    padding: 4px 0 8px; border-bottom: 1px solid #e2e8f0; margin-bottom: 10px;
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 5px; }
-::-webkit-scrollbar-thumb:hover { background: #3a3a60; }
+::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
 /* ── Gradio built-in overrides ─────────────────────────────────────────── */
 footer { display: none !important; }
@@ -830,12 +810,11 @@ def _build_input_tabs():
 with gr.Blocks(
     theme=gr.themes.Base(), css=css, title="Customer Churn Predictor"
 ) as demo:
-    # ── Header with gradient logo bar ─────────────────────────────────────
+    # ── Header ────────────────────────────────────────────────────────────
     gr.HTML(f"""
     <div id="app-header">
       <div style="width:48px;height:48px;margin:0 auto 14px;border-radius:14px;
-                  background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;
-                  align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(99,102,241,.35);">
+                  background:#6366f1;display:flex;align-items:center;justify-content:center;">
         {SVG["agent"].replace('width="18"', 'width="26"').replace('height="18"', 'height="26"').replace('stroke="currentColor"', 'stroke="#fff"')}
       </div>
       <h1>Customer Churn Predictor</h1>
@@ -869,11 +848,11 @@ with gr.Blocks(
             with gr.Column(scale=6, min_width=420):
                 gr.HTML('<div class="slabel">Analysis Report</div>')
                 agent_output = gr.HTML(
-                    value='<div style="text-align:center;color:#44446a;padding:100px 24px;'
+                    value='<div style="text-align:center;color:#94a3b8;padding:100px 24px;'
                     'font-family:system-ui;font-size:0.88rem;line-height:1.8;">'
-                    '<div style="font-size:2rem;margin-bottom:12px;opacity:.4;">'
+                    '<div style="font-size:2rem;margin-bottom:12px;opacity:.3;">'
                     + SVG["agent"]
-                    .replace('stroke="currentColor"', 'stroke="#44446a"')
+                    .replace('stroke="currentColor"', 'stroke="#94a3b8"')
                     .replace('width="18"', 'width="36"')
                     .replace('height="18"', 'height="36"')
                     + "</div>"
@@ -916,7 +895,7 @@ with gr.Blocks(
                 gr.HTML('<div class="slabel">Churn Risk Gauge</div>')
                 gauge_plot = gr.Plot(show_label=False, elem_id="gauge-plot")
                 result_box = gr.Markdown(
-                    value='<div style="text-align:center;color:#44446a;padding:20px 0;'
+                    value='<div style="text-align:center;color:#94a3b8;padding:20px 0;'
                     'font-size:0.82rem;">run prediction to see result</div>',
                     elem_id="result-box",
                 )
