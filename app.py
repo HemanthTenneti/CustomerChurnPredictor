@@ -309,8 +309,8 @@ def predict(*args):
     md = (
         f'<div style="text-align:center;padding:16px 0 12px;">'
         f'<span style="font-size:1.5rem;font-weight:700;color:{lc};letter-spacing:.06em;">{label}</span><br>'
-        f'<span style="color:#374151;font-size:0.82rem;margin-top:6px;display:inline-block;">'
-        f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:#1e293b">{prob * 100:.1f}%</b></span></div>'
+        f'<span style="color:#000000;font-size:0.82rem;margin-top:6px;display:inline-block;">'
+        f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:{rc}">{prob * 100:.1f}%</b></span></div>'
     )
     return md, make_gauge(prob)
 
@@ -430,7 +430,7 @@ def run_agent_with_rag(
             f"color:{c};display:flex;align-items:center;justify-content:center;"
             f"font-weight:700;font-size:0.85rem;border:1px solid {c}25;"
             f'">{i}</div>'
-            f'<div style="flex:1;color:#111827;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
+            f'<div style="flex:1;color:#000000;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
         )
 
     output = f"""
@@ -450,7 +450,7 @@ def run_agent_with_rag(
 
       <!-- Risk Factors -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.7rem;
+        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:700;">
           <span style="color:#6d28d9;display:flex;">{SVG["risk"]}</span> Identified Risk Factors
         </div>
@@ -460,18 +460,18 @@ def run_agent_with_rag(
       <!-- Explanation -->
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;
                   padding:24px;margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.7rem;
+        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:700;">
           <span style="color:#6d28d9;display:flex;">{SVG["brain"]}</span> Why This Customer Is at Risk
         </div>
-        <div style="color:#111827;font-size:0.92rem;line-height:1.75;">
+        <div style="color:#000000;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
         </div>
       </div>
 
       <!-- Recommendations -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.7rem;
+        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;font-weight:700;">
           <span style="color:#6d28d9;display:flex;">{SVG["lightbulb"]}</span> Recommended Retention Actions
         </div>
@@ -481,11 +481,11 @@ def run_agent_with_rag(
       <!-- Executive Summary -->
       <div style="background:#faf5ff;border-left:3px solid #7c3aed;border-radius:0 10px 10px 0;
                   padding:18px 24px;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.65rem;
+        <div style="display:flex;align-items:center;gap:8px;color:#000000;font-size:0.65rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:700;">
           <span style="color:#6d28d9;display:flex;">{SVG["target"]}</span> Executive Summary
         </div>
-        <div style="color:#111827;font-size:0.9rem;line-height:1.65;font-style:italic;">
+        <div style="color:#000000;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
         </div>
       </div>
@@ -507,7 +507,7 @@ css = """
 body, .gradio-container, gradio-app, .wrap {
     background: #ffffff !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-    color: #1e293b !important;
+    color: #000000 !important;
 }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
@@ -516,11 +516,11 @@ body, .gradio-container, gradio-app, .wrap {
     border-bottom: 1px solid #e2e8f0;
 }
 #app-header h1 {
-    margin: 0; font-size: 1.6rem; font-weight: 800; color: #0f172a;
+    margin: 0; font-size: 1.6rem; font-weight: 800; color: #000000;
     letter-spacing: -.02em;
 }
 #app-header p {
-    margin: 10px 0 0; font-size: 0.78rem; color: #6366f1;
+    margin: 10px 0 0; font-size: 0.78rem; color: #000000;
     font-weight: 500; letter-spacing: .04em;
 }
 
@@ -535,19 +535,19 @@ body, .gradio-container, gradio-app, .wrap {
 .tab-nav button {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
-    color: #94a3b8 !important; background: transparent !important;
+    color: #666666 !important; background: transparent !important;
     border: none !important; border-bottom: 2px solid transparent !important;
     padding: 12px 28px !important; border-radius: 0 !important;
     text-transform: uppercase; letter-spacing: .08em;
     transition: color .2s, border-color .2s;
 }
 .tab-nav button.selected {
-    color: #1e293b !important;
+    color: #000000 !important;
     border-bottom-color: #6366f1 !important;
     background: transparent !important;
 }
 .tab-nav button:hover {
-    color: #64748b !important; background: transparent !important;
+    color: #000000 !important; background: transparent !important;
 }
 .tabitem { padding: 14px 0 0 !important; }
 
@@ -569,9 +569,9 @@ span.svelte-1gfkn6j, span.svelte-1b6s6vi,
 [class*="label"] {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.72rem !important;
-    color: #64748b !important;
+    color: #000000 !important;
     text-transform: uppercase; letter-spacing: .05em;
-    font-weight: 500 !important;
+    font-weight: 700 !important;
 }
 
 /* ── Inputs ────────────────────────────────────────────────────────────── */
@@ -580,7 +580,7 @@ input[type="number"], input[type="text"], textarea, select,
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
-    color: #1e293b !important;
+    color: #000000 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.85rem !important;
     text-transform: none !important; letter-spacing: 0 !important;
@@ -595,7 +595,7 @@ ul[role="listbox"], ul[role="listbox"] li,
 .multiselect span, input.svelte-1gfkn6j,
 [data-testid="dropdown"] input, [data-testid="dropdown"] span {
     text-transform: none !important; letter-spacing: 0 !important;
-    font-size: 0.85rem !important; color: #1e293b !important;
+    font-size: 0.85rem !important; color: #000000 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
 }
 
@@ -616,7 +616,7 @@ ul[role="listbox"], ul[role="listbox"] li,
 
 /* ── Predict Button ────────────────────────────────────────────────────── */
 .predict-btn {
-    background: #f8fafc !important; color: #64748b !important;
+    background: #f8fafc !important; color: #000000 !important;
     border: 1px solid #e2e8f0 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
@@ -626,20 +626,20 @@ ul[role="listbox"], ul[role="listbox"] li,
 }
 .predict-btn:hover {
     background: #f1f5f9 !important; border-color: #cbd5e1 !important;
-    color: #334155 !important;
+    color: #000000 !important;
 }
 
 /* ── Example Buttons ───────────────────────────────────────────────────── */
 .ex-btn {
-    background: #f8fafc !important; color: #64748b !important;
+    background: #f8fafc !important; color: #000000 !important;
     border: 1px solid #e2e8f0 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.72rem !important; border-radius: 10px !important;
     padding: 7px 10px !important; flex: 1 !important;
-    transition: all .15s; font-weight: 500;
+    transition: all .15s; font-weight: 600;
 }
 .ex-btn:hover {
-    color: #334155 !important; border-color: #cbd5e1 !important;
+    color: #000000 !important; border-color: #cbd5e1 !important;
     background: #f1f5f9 !important;
 }
 
@@ -665,8 +665,8 @@ ul[role="listbox"], ul[role="listbox"] li,
 /* ── Section Labels ────────────────────────────────────────────────────── */
 .slabel {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.65rem; color: #94a3b8;
-    text-transform: uppercase; letter-spacing: .12em; font-weight: 600;
+    font-size: 0.65rem; color: #000000;
+    text-transform: uppercase; letter-spacing: .12em; font-weight: 700;
     padding: 4px 0 8px; border-bottom: 1px solid #e2e8f0; margin-bottom: 10px;
 }
 
