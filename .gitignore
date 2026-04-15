@@ -2,3 +2,6 @@
 .venv
 .DS_Store
 __pycache__
+.env
+*.pyc
+rag/chroma_db/
