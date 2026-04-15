@@ -576,6 +576,58 @@ input[type="number"], input[type="text"], textarea, select,
     transition: border-color .2s, box-shadow .2s;
 }
 
+/* ── FIX: Dark parent containers behind dropdowns ─────────────────────── */
+/* Gradio's .form and .styler divs default to dark slate (#374151).        */
+/* They sit behind rounded-corner inputs → dark bleed at edges.            */
+.form.svelte-d5xbca,
+.styler.svelte-1p9262q {
+    background: transparent !important;
+}
+
+/* ── FIX: Dropdown options panel — dark bg + dark text = unreadable ────── */
+/* Gradio defaults: ul.options bg=#1f2937, li.item color=#1f2937.          */
+/* Override to white panel with dark text.                                  */
+ul.options.svelte-1ou0lab {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08) !important;
+}
+ul.options li.item,
+li.item.svelte-1ou0lab {
+    color: #1f2937 !important;
+    background: transparent !important;
+}
+ul.options li.item:hover,
+li.item.svelte-1ou0lab:hover {
+    background: #f3f4f6 !important;
+    color: #1f2937 !important;
+}
+ul.options li.item.selected,
+li.item.svelte-1ou0lab.selected {
+    background: #eef2ff !important;
+    color: #4f46e5 !important;
+    font-weight: 600 !important;
+}
+.overflow-dropdown.svelte-11gaq1 {
+    background: transparent !important;
+}
+
+/* ── FIX: Dropdown arrow invisible (nearly-white fill on white bg) ─────── */
+/* Gradio's default .dropdown-arrow fill is #f3f4f6 (almost white).        */
+/* Override to dark slate so it's clearly visible.                          */
+.dropdown-arrow {
+    fill: #6b7280 !important;
+    color: #6b7280 !important;
+}
+.dropdown-arrow path {
+    fill: #6b7280 !important;
+}
+.icon-wrap:hover .dropdown-arrow,
+.icon-wrap:hover .dropdown-arrow path {
+    fill: #1f2937 !important;
+}
+
 /* ── Dropdown & Select Specific ────────────────────────────────────────── */
 select {
     appearance: none !important;
@@ -962,17 +1014,18 @@ with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
             with gr.Column(scale=6, min_width=420):
                 gr.HTML('<div class="slabel">Analysis Report</div>')
                 agent_output = gr.HTML(
-                    value='<div style="text-align:center;color:#6b7280;padding:100px 24px;'
+                    value='<div style="display:flex;align-items:center;justify-content:center;'
+                    "gap:14px;color:#6b7280;padding:100px 24px;"
                     'font-family:system-ui;font-size:0.88rem;line-height:1.8;">'
-                    '<div style="font-size:2rem;margin-bottom:12px;opacity:.5;">'
+                    '<div style="flex-shrink:0;opacity:.4;">'
                     + SVG["agent"]
                     .replace('stroke="currentColor"', 'stroke="#9ca3af"')
-                    .replace('width="18"', 'width="36"')
-                    .replace('height="18"', 'height="36"')
+                    .replace('width="18"', 'width="32"')
+                    .replace('height="18"', 'height="32"')
                     + "</div>"
-                    "Select a customer profile and click<br>"
+                    "<div>Select a customer profile and click<br>"
                     '<b style="color:#6366f1;">Run Agent Analysis</b> to generate<br>'
-                    "a full AI-powered retention report.</div>",
+                    "a full AI-powered retention report.</div></div>",
                     elem_classes=["agent-output"],
                 )
                 with gr.Accordion("Retrieved Knowledge (RAG)", open=False):

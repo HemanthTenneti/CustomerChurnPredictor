@@ -2,12 +2,25 @@
 
 import os
 import pandas as pd
+import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 
+_SCALER_CACHE_PATH = "models/scaler.pkl"
+
+
 def build_scaler() -> StandardScaler:
-    """Replay preprocessing from the notebook to fit an identical scaler."""
+    """Replay preprocessing from the notebook to fit an identical scaler.
+
+    Uses cached scaler if available to avoid slow Kaggle download on every startup.
+    """
+    # Try to load from cache first
+    if os.path.exists(_SCALER_CACHE_PATH):
+        return joblib.load(_SCALER_CACHE_PATH)
+
+    # Fallback: Build from Kaggle (slow)
+    print("Building scaler from Kaggle dataset (first run, may be slow)...")
     import kagglehub
 
     dataset_path = kagglehub.dataset_download("blastchar/telco-customer-churn")
@@ -30,4 +43,9 @@ def build_scaler() -> StandardScaler:
 
     scaler = StandardScaler()
     scaler.fit(X_train)
+
+    # Cache for future runs
+    os.makedirs("models", exist_ok=True)
+    joblib.dump(scaler, _SCALER_CACHE_PATH)
+
     return scaler
