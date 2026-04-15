@@ -25,6 +25,12 @@ class RetentionRetriever:
         )
 
     def retrieve(self, query: str, k: int = 3) -> list[str]:
-        """Return the top-k most relevant chunks as plain strings."""
-        docs = self._store.similarity_search(query, k=k)
+        """Return the top-k most *diverse* relevant chunks using MMR.
+
+        Uses Max Marginal Relevance to avoid returning overlapping/near-duplicate
+        chunks that say the same thing in slightly different wording.
+        """
+        docs = self._store.max_marginal_relevance_search(
+            query, k=k, fetch_k=k * 3, lambda_mult=0.5
+        )
         return [doc.page_content for doc in docs]

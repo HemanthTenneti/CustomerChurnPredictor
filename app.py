@@ -397,8 +397,12 @@ def run_agent_with_rag(
     if not api_key or api_key == "your_groq_api_key_here":
         return _no_key_error()
     try:
-        from agent.churn_agent import get_agent
+        import sys
+        import importlib
 
+        # Lazy load to avoid startup blocking
+        agent_module = importlib.import_module("agent.churn_agent")
+        get_agent = getattr(agent_module, "get_agent")
         state = get_agent().run(features)
     except Exception as exc:
         return _no_key_error(str(exc))
@@ -410,13 +414,14 @@ def run_agent_with_rag(
     rc = RISK_COLORS.get(risk, "#64748b")
 
     factors_html = ""
+    zap_icon = SVG["zap"].replace('stroke="currentColor"', f'stroke="{rc}"')
     for f in state.get("risk_factors", []):
         factors_html += (
             f'<span style="display:inline-flex;align-items:center;gap:5px;'
             f"background:{rc}10;color:{rc};border:1px solid {rc}30;"
             f"border-radius:20px;padding:5px 14px;margin:3px 4px;"
             f'font-size:0.78rem;font-weight:600;">'
-            f"{SVG['zap']}{f}</span>"
+            f"{zap_icon}{f}</span>"
         )
 
     recs = state.get("recommendations", [])
@@ -452,7 +457,7 @@ def run_agent_with_rag(
       <div style="margin-bottom:28px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;">
-          <span style="color:#6d28d9;display:flex;">{SVG["risk"]}</span> Identified Risk Factors
+          <span style="color:#5b21b6;display:flex;">{SVG["risk"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Identified Risk Factors
         </div>
         <div style="line-height:2.4;">{factors_html}</div>
       </div>
@@ -462,7 +467,7 @@ def run_agent_with_rag(
                   padding:24px;margin-bottom:28px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;">
-          <span style="color:#6d28d9;display:flex;">{SVG["brain"]}</span> Why This Customer Is at Risk
+          <span style="color:#5b21b6;display:flex;">{SVG["brain"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Why This Customer Is at Risk
         </div>
         <div style="color:#1f2937;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
@@ -473,7 +478,7 @@ def run_agent_with_rag(
       <div style="margin-bottom:28px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;font-weight:600;">
-          <span style="color:#6d28d9;display:flex;">{SVG["lightbulb"]}</span> Recommended Retention Actions
+          <span style="color:#5b21b6;display:flex;">{SVG["lightbulb"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Recommended Retention Actions
         </div>
         {recs_html}
       </div>
@@ -483,7 +488,7 @@ def run_agent_with_rag(
                   padding:18px 24px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.65rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:600;">
-          <span style="color:#6d28d9;display:flex;">{SVG["target"]}</span> Executive Summary
+          <span style="color:#5b21b6;display:flex;">{SVG["target"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Executive Summary
         </div>
         <div style="color:#1f2937;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
@@ -513,6 +518,10 @@ body, .gradio-container, gradio-app, .wrap {
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 
+/* ── Gradio prose class overrides inline color — force it dark ─────────── */
+.prose { color: #1f2937 !important; }
+.prose * { color: inherit !important; }
+
 /* ── Header ────────────────────────────────────────────────────────────── */
 #app-header {
     text-align: center; padding: 30px 0 20px; margin-bottom: 20px;
@@ -535,7 +544,7 @@ body, .gradio-container, gradio-app, .wrap {
 }
 
 /* ── Top Tabs ──────────────────────────────────────────────────────────── */
-.tab-nav button {
+.tab-nav button, button[role="tab"] {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
     color: #9ca3af !important; background: transparent !important;
@@ -544,23 +553,30 @@ body, .gradio-container, gradio-app, .wrap {
     text-transform: uppercase; letter-spacing: .08em;
     transition: color .2s, border-color .2s;
 }
-.tab-nav button.selected {
+.tab-nav button.selected,
+button[role="tab"][aria-selected="true"] {
     color: #1f2937 !important;
     border-bottom-color: #6366f1 !important;
     background: transparent !important;
 }
-.tab-nav button:hover {
-    color: #6b7280 !important; background: transparent !important;
+.tab-nav button:hover,
+button[role="tab"]:hover {
+    color: #6366f1 !important; background: transparent !important;
 }
 .tabitem { padding: 14px 0 0 !important; }
 
 /* ── Inner Tabs ────────────────────────────────────────────────────────── */
-.tabitem .tab-nav button {
+.tabitem .tab-nav button, .tabitem button[role="tab"] {
     font-size: 0.74rem !important; padding: 7px 16px !important;
     letter-spacing: .06em;
 }
-.tabitem .tab-nav button.selected {
+.tabitem .tab-nav button.selected,
+.tabitem button[role="tab"][aria-selected="true"] {
     border-bottom-color: #7c3aed !important; color: #6366f1 !important;
+}
+.tabitem .tab-nav button:hover,
+.tabitem button[role="tab"]:hover {
+    color: #7c3aed !important; background: transparent !important;
 }
 
 /* ── Inputs ────────────────────────────────────────────────────────────── */
@@ -783,7 +799,7 @@ li[role="option"] {
     color: #1f2937 !important; 
 }
 
-/* Tab buttons */
+/* Tab buttons — duplicated to ensure both selectors work */
 button[role="tab"] { 
     color: #9ca3af !important; 
     font-weight: 500 !important;
@@ -793,9 +809,9 @@ button[role="tab"][aria-selected="true"] {
     font-weight: 600 !important;
 }
 
-/* Accordion headers */
-.gr-accordion-header { 
-    color: #1f2937 !important; 
+/* Accordion headers — fix near-white text */
+button.label-wrap, button.label-wrap span {
+    color: #374151 !important;
 }
 
 /* Radio & checkbox labels */
@@ -901,7 +917,7 @@ def _build_input_tabs():
                         ["No", "Yes"], value="Yes", label="Phone Service"
                     )
                     multilines = gr.Dropdown(
-                        ["No", "No phone service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Multiple Lines",
                     )
@@ -912,37 +928,80 @@ def _build_input_tabs():
                 )
                 with gr.Row():
                     online_sec = gr.Dropdown(
-                        ["No", "No internet service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Online Security",
                     )
                     online_bkp = gr.Dropdown(
-                        ["No", "No internet service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Online Backup",
                     )
                 with gr.Row():
                     device_prot = gr.Dropdown(
-                        ["No", "No internet service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Device Protection",
                     )
                     tech_sup = gr.Dropdown(
-                        ["No", "No internet service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Tech Support",
                     )
                 with gr.Row():
                     streaming_tv = gr.Dropdown(
-                        ["No", "No internet service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Streaming TV",
                     )
                     streaming_movies = gr.Dropdown(
-                        ["No", "No internet service", "Yes"],
+                        ["No", "Yes"],
                         value="No",
                         label="Streaming Movies",
                     )
+
+            # ── Conditional dropdown updates ──────────────────────────────
+
+            def _on_phone_change(phone_val):
+                if phone_val == "No":
+                    return gr.Dropdown(
+                        choices=["No phone service"],
+                        value="No phone service",
+                        interactive=False,
+                    )
+                return gr.Dropdown(choices=["No", "Yes"], value="No", interactive=True)
+
+            phone.change(
+                fn=_on_phone_change,
+                inputs=[phone],
+                outputs=[multilines],
+            )
+
+            def _on_internet_change(inet_val):
+                locked = gr.Dropdown(
+                    choices=["No internet service"],
+                    value="No internet service",
+                    interactive=False,
+                )
+                open_dd = gr.Dropdown(
+                    choices=["No", "Yes"], value="No", interactive=True
+                )
+                if inet_val == "No":
+                    return [locked] * 6
+                return [open_dd] * 6
+
+            internet.change(
+                fn=_on_internet_change,
+                inputs=[internet],
+                outputs=[
+                    online_sec,
+                    online_bkp,
+                    device_prot,
+                    tech_sup,
+                    streaming_tv,
+                    streaming_movies,
+                ],
+            )
 
     return [
         senior,
@@ -1015,16 +1074,16 @@ with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
                 gr.HTML('<div class="slabel">Analysis Report</div>')
                 agent_output = gr.HTML(
                     value='<div style="display:flex;align-items:center;justify-content:center;'
-                    "gap:14px;color:#6b7280;padding:100px 24px;"
+                    "gap:14px;color:#1f2937;padding:100px 24px;"
                     'font-family:system-ui;font-size:0.88rem;line-height:1.8;">'
-                    '<div style="flex-shrink:0;opacity:.4;">'
+                    '<div style="flex-shrink:0;opacity:.8;">'
                     + SVG["agent"]
-                    .replace('stroke="currentColor"', 'stroke="#9ca3af"')
+                    .replace('stroke="currentColor"', 'stroke="#374151"')
                     .replace('width="18"', 'width="32"')
                     .replace('height="18"', 'height="32"')
                     + "</div>"
                     "<div>Select a customer profile and click<br>"
-                    '<b style="color:#6366f1;">Run Agent Analysis</b> to generate<br>'
+                    '<b style="color:#4f46e5;">Run Agent Analysis</b> to generate<br>'
                     "a full AI-powered retention report.</div></div>",
                     elem_classes=["agent-output"],
                 )
