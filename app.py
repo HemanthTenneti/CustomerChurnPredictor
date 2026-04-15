@@ -575,6 +575,32 @@ input[type="number"], input[type="text"], textarea, select,
     text-transform: none !important; letter-spacing: 0 !important;
     transition: border-color .2s, box-shadow .2s;
 }
+
+/* ── Dropdown & Select Specific ────────────────────────────────────────── */
+select {
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231f2937' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 12px !important;
+    padding-right: 32px !important;
+    background-color: #ffffff !important;
+}
+
+input[role="listbox"] {
+    background: #ffffff !important;
+    color: #1f2937 !important;
+}
+
+/* Override Gradio's dropdown styling */
+.gr-dropdown {
+    background: #ffffff !important;
+}
+.gr-dropdown select {
+    background: #ffffff !important;
+    accent-color: #6366f1 !important;
+}
+
 input:focus, select:focus, textarea:focus {
     border-color: #6366f1 !important;
     outline: none !important;
@@ -675,10 +701,29 @@ span[data-testid="block-info"] {
     font-weight: 500 !important;
 }
 
+/* Dropdown container — no background fill */
+div[data-testid="dropdown"] {
+    background: transparent !important;
+}
+
+/* Dropdown input — white background, dark border */
+div[data-testid="dropdown"] input[role="listbox"] {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    color: #1f2937 !important;
+}
+
+/* Make dropdown arrow darker and visible */
+div[data-testid="dropdown"] input[role="listbox"]::after {
+    border-color: #1f2937 !important;
+}
+
 /* Dropdown values (primary text) */
 input[role="listbox"] { 
     color: #1f2937 !important; 
     font-weight: 400 !important;
+    background: #ffffff !important;
+    accent-color: #6366f1 !important;
 }
 
 [role="option"],
