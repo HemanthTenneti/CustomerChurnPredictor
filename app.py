@@ -508,7 +508,25 @@ body, .gradio-container, gradio-app, .wrap {
     background: #ffffff !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     color: #000000 !important;
+    --block-title-text-color: #000000 !important;
+    --block-label-text-color: #000000 !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   CRITICAL: Fix Gradio label colors to BLACK - must be early in CSS
+   ══════════════════════════════════════════════════════════════════════════════ */
+:root, body, .gradio-container {
+    --block-title-text-color: #000000 !important;
+    --block-label-text-color: #000000 !important;
+    --block-title-text-weight: 700 !important;
+    --block-label-text-weight: 700 !important;
+}
+
+body span[data-testid="block-info"] { color: #000000 !important; }
+body .svelte-jdcl7l { color: #000000 !important; font-weight: 700 !important; }
+span[data-testid="block-info"] { color: #000000 !important; }
+.svelte-jdcl7l { color: #000000 !important; font-weight: 700 !important; }
+[class*="svelte"][data-testid="block-info"] { color: #000000 !important; }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
 #app-header {
@@ -678,7 +696,121 @@ ul[role="listbox"], ul[role="listbox"] li,
 
 /* ── Gradio built-in overrides ─────────────────────────────────────────── */
 footer { display: none !important; }
+
+/* ── AGGRESSIVE LABEL & TEXT FIXES FOR GRADIO ──────────────────────────── */
+/* Target Gradio's Svelte-generated classes for form labels */
+span.has-info.svelte-jdcl7l { 
+    color: #000000 !important; 
+    font-weight: 700 !important;
+}
+
+span.svelte-jdcl7l { 
+    color: #000000 !important; 
+    font-weight: 700 !important;
+}
+
+span[data-testid="block-info"] { 
+    color: #000000 !important; 
+    font-weight: 700 !important;
+}
+
+/* Dropdown & select elements */
+input[role="listbox"] { 
+    color: #000000 !important; 
+}
+
+/* Dropdown options */
+[role="option"] { 
+    color: #000000 !important; 
+}
+li[role="option"] { 
+    color: #000000 !important; 
+}
+
+/* Gradio-specific input text colors */
+.gr-input input,
+.gr-dropdown select,
+.gr-textbox textarea { 
+    color: #000000 !important; 
+}
+
+/* Tab button text */
+button[role="tab"] { 
+    color: #000000 !important; 
+}
+button[role="tab"][aria-selected="true"] { 
+    color: #000000 !important; 
+    font-weight: 700 !important;
+}
+
+/* Accordion headers */
+.gr-accordion-header { 
+    color: #000000 !important; 
+}
+
+/* Radio & checkbox labels */
+.gr-radio-group label,
+.gr-checkbox-group label { 
+    color: #000000 !important; 
+}
+
+/* Svelte scope classes (Gradio form elements) */
+.svelte-jdcl7l,
+.svelte-1xfsv4t,
+.svelte-11gaq1 { 
+    color: #000000 !important; 
+    font-weight: 700 !important;
+}
+
+/* FINAL OVERRIDE - use [attr] selectors which have higher specificity */
+[data-testid="block-info"] { 
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Force all text to black at the end */
+* { 
+    --text-color-primary: #000000 !important;
+}
+
+/* END OF CSS */
 """
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CUSTOM GRADIO THEME — Override text colors to black/dark gray
+# ══════════════════════════════════════════════════════════════════════════════
+theme = gr.themes.Base(
+    primary_hue="indigo",
+    secondary_hue="indigo",
+    neutral_hue="slate",
+    spacing_size="md",
+    radius_size="md",
+    text_size="md",
+    font=[
+        gr.themes.GoogleFont("Inter"),
+        "ui-sans-serif",
+        "system-ui",
+        "sans-serif",
+    ],
+).set(
+    # PRIMARY TEXT (Labels, headings) - CRITICAL: Set to pure black
+    block_label_text_color="#000000",
+    block_label_text_color_dark="#000000",
+    block_label_text_weight="700",
+    block_title_text_color="#000000",
+    block_title_text_color_dark="#000000",
+    block_title_text_weight="700",
+    body_text_color="#000000",
+    body_text_color_dark="#000000",
+    body_text_weight="400",
+    # BORDERS & BACKGROUNDS (Keep light for contrast)
+    border_color_primary="#e2e8f0",
+    border_color_primary_dark="#334155",
+    background_fill_primary="#ffffff",
+    background_fill_primary_dark="#1e293b",
+    block_background_fill="#f8fafc",
+    block_background_fill_dark="#0f172a",
+)
 
 
 # ── Shared input builder ────────────────────────────────────────────────────
@@ -807,9 +939,12 @@ def _build_input_tabs():
 # ══════════════════════════════════════════════════════════════════════════════
 # LAYOUT
 # ══════════════════════════════════════════════════════════════════════════════
-with gr.Blocks(
-    theme=gr.themes.Base(), css=css, title="Customer Churn Predictor"
-) as demo:
+with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
+    # ── Load fix-labels script via external file ──────────────────────────
+    gr.HTML(
+        '<script src="file=/Users/hemanth10etii/Coding/CustomerChurnPredictor/fix-labels.js"></script>'
+    )
+
     # ── Header ────────────────────────────────────────────────────────────
     gr.HTML(f"""
     <div id="app-header">
@@ -848,11 +983,11 @@ with gr.Blocks(
             with gr.Column(scale=6, min_width=420):
                 gr.HTML('<div class="slabel">Analysis Report</div>')
                 agent_output = gr.HTML(
-                    value='<div style="text-align:center;color:#94a3b8;padding:100px 24px;'
+                    value='<div style="text-align:center;color:#000000;padding:100px 24px;'
                     'font-family:system-ui;font-size:0.88rem;line-height:1.8;">'
                     '<div style="font-size:2rem;margin-bottom:12px;opacity:.3;">'
                     + SVG["agent"]
-                    .replace('stroke="currentColor"', 'stroke="#94a3b8"')
+                    .replace('stroke="currentColor"', 'stroke="#000000"')
                     .replace('width="18"', 'width="36"')
                     .replace('height="18"', 'height="36"')
                     + "</div>"
@@ -895,7 +1030,7 @@ with gr.Blocks(
                 gr.HTML('<div class="slabel">Churn Risk Gauge</div>')
                 gauge_plot = gr.Plot(show_label=False, elem_id="gauge-plot")
                 result_box = gr.Markdown(
-                    value='<div style="text-align:center;color:#94a3b8;padding:20px 0;'
+                    value='<div style="text-align:center;color:#000000;padding:20px 0;'
                     'font-size:0.82rem;">run prediction to see result</div>',
                     elem_id="result-box",
                 )
