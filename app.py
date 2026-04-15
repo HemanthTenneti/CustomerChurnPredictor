@@ -309,7 +309,7 @@ def predict(*args):
     md = (
         f'<div style="text-align:center;padding:16px 0 12px;">'
         f'<span style="font-size:1.5rem;font-weight:700;color:{lc};letter-spacing:.06em;">{label}</span><br>'
-        f'<span style="color:#64748b;font-size:0.82rem;margin-top:6px;display:inline-block;">'
+        f'<span style="color:#374151;font-size:0.82rem;margin-top:6px;display:inline-block;">'
         f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:#1e293b">{prob * 100:.1f}%</b></span></div>'
     )
     return md, make_gauge(prob)
@@ -415,14 +415,14 @@ def run_agent_with_rag(
             f'<span style="display:inline-flex;align-items:center;gap:5px;'
             f"background:{rc}10;color:{rc};border:1px solid {rc}30;"
             f"border-radius:20px;padding:5px 14px;margin:3px 4px;"
-            f'font-size:0.78rem;font-weight:500;">'
+            f'font-size:0.78rem;font-weight:600;">'
             f"{SVG['zap']}{f}</span>"
         )
 
     recs = state.get("recommendations", [])
     recs_html = ""
     for i, r in enumerate(recs, 1):
-        colors = ["#6366f1", "#7c3aed", "#9333ea"]
+        colors = ["#6d28d9", "#6d28d9", "#6d28d9"]
         c = colors[(i - 1) % 3]
         recs_html += (
             f'<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;">'
@@ -430,7 +430,7 @@ def run_agent_with_rag(
             f"color:{c};display:flex;align-items:center;justify-content:center;"
             f"font-weight:700;font-size:0.85rem;border:1px solid {c}25;"
             f'">{i}</div>'
-            f'<div style="flex:1;color:#334155;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
+            f'<div style="flex:1;color:#111827;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
         )
 
     output = f"""
@@ -450,9 +450,9 @@ def run_agent_with_rag(
 
       <!-- Risk Factors -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.68rem;
-                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600;">
-          <span style="color:{rc};">{SVG["risk"]}</span> Identified Risk Factors
+        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.7rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:700;">
+          <span style="color:#6d28d9;display:flex;">{SVG["risk"]}</span> Identified Risk Factors
         </div>
         <div style="line-height:2.4;">{factors_html}</div>
       </div>
@@ -460,20 +460,20 @@ def run_agent_with_rag(
       <!-- Explanation -->
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;
                   padding:24px;margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.68rem;
-                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600;">
-          <span style="color:#7c3aed;">{SVG["brain"]}</span> Why This Customer Is at Risk
+        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.7rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:700;">
+          <span style="color:#6d28d9;display:flex;">{SVG["brain"]}</span> Why This Customer Is at Risk
         </div>
-        <div style="color:#334155;font-size:0.92rem;line-height:1.75;">
+        <div style="color:#111827;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
         </div>
       </div>
 
       <!-- Recommendations -->
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.68rem;
-                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px;font-weight:600;">
-          <span style="color:#6366f1;">{SVG["lightbulb"]}</span> Recommended Retention Actions
+        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.7rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;font-weight:700;">
+          <span style="color:#6d28d9;display:flex;">{SVG["lightbulb"]}</span> Recommended Retention Actions
         </div>
         {recs_html}
       </div>
@@ -481,11 +481,11 @@ def run_agent_with_rag(
       <!-- Executive Summary -->
       <div style="background:#faf5ff;border-left:3px solid #7c3aed;border-radius:0 10px 10px 0;
                   padding:18px 24px;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.65rem;
-                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:600;">
-          <span style="color:#7c3aed;">{SVG["target"]}</span> Executive Summary
+        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.65rem;
+                    text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:700;">
+          <span style="color:#6d28d9;display:flex;">{SVG["target"]}</span> Executive Summary
         </div>
-        <div style="color:#1e293b;font-size:0.9rem;line-height:1.65;font-style:italic;">
+        <div style="color:#111827;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
         </div>
       </div>
