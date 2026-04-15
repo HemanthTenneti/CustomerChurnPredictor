@@ -24,15 +24,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── Load the saved model ────────────────────────────────────────────────────
 model = joblib.load("models/model.pkl")[0]
 
-# ── Rebuild the StandardScaler ──────────────────────────────────────────────
 from scaler import build_scaler
 
 scaler = build_scaler()
 
-# The 30 columns from one-hot encoding the Telco data
 FEATURE_COLS = [
     "SeniorCitizen",
     "tenure",
@@ -68,7 +65,7 @@ FEATURE_COLS = [
 
 EXAMPLE_PROFILES = [
     {
-        "label": "⚡ High-Risk Customer",
+        "label": "High-Risk Customer",
         "senior": "No",
         "tenure": 2,
         "monthly": 90.0,
@@ -90,7 +87,7 @@ EXAMPLE_PROFILES = [
         "payment": "Electronic check",
     },
     {
-        "label": "🛡️ Loyal Customer",
+        "label": "Loyal Customer",
         "senior": "No",
         "tenure": 60,
         "monthly": 55.0,
@@ -112,7 +109,7 @@ EXAMPLE_PROFILES = [
         "payment": "Bank transfer (automatic)",
     },
     {
-        "label": "👤 New Senior",
+        "label": "New Senior",
         "senior": "Yes",
         "tenure": 5,
         "monthly": 75.0,
@@ -136,7 +133,6 @@ EXAMPLE_PROFILES = [
 ]
 
 
-# ── Encoding ───────────────────────────────────────────────────────────────
 def encode_input(
     senior,
     tenure,
@@ -215,74 +211,80 @@ def encode_input(
         row["PaymentMethod_Electronic check"] = 1
     elif payment == "Mailed check":
         row["PaymentMethod_Mailed check"] = 1
-    raw = np.array([list(row.values())], dtype=float)
-    return scaler.transform(raw)
+    return scaler.transform(np.array([list(row.values())], dtype=float))
 
 
-# ── Gauge chart ─────────────────────────────────────────────────────────────
-RISK_COLORS = {"High": "#ef4444", "Medium": "#eab308", "Low": "#22c55e"}
+RISK_COLORS = {"High": "#f43f5e", "Medium": "#f59e0b", "Low": "#10b981"}
+RISK_GLOWS = {
+    "High": "rgba(244,63,94,.25)",
+    "Medium": "rgba(245,158,11,.2)",
+    "Low": "rgba(16,185,129,.2)",
+}
+
+
+# ── SVG Icons (Lucide-style, no external deps) ──────────────────────────────
+SVG = {
+    "agent": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>',
+    "predict": '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>',
+    "risk": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+    "brain": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M19.938 10.5a4 4 0 0 1 .585.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M19.967 17.484A4 4 0 0 1 18 18"/></svg>',
+    "lightbulb": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>',
+    "target": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+    "book": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>',
+    "zap": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+    "shield": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>',
+    "user": '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+}
 
 
 def make_gauge(prob: float) -> plt.Figure:
-    if prob >= 0.7:
-        fill_color = "#ef4444"
-    elif prob >= 0.4:
-        fill_color = "#eab308"
-    else:
-        fill_color = "#22c55e"
-
-    fig, ax = plt.subplots(figsize=(4.0, 2.5), facecolor="#0f1923")
-    ax.set_facecolor("#0f1923")
-
-    track = Wedge(
-        (0, 0),
-        1.0,
-        0,
-        180,
-        width=0.32,
-        facecolor="#1b2b3d",
-        edgecolor="#263a50",
-        lw=1.0,
-    )
-    ax.add_patch(track)
-
-    end_angle = 180 - prob * 180
-    if prob > 0.001:
-        filled = Wedge(
+    fc = "#f43f5e" if prob >= 0.7 else "#f59e0b" if prob >= 0.4 else "#10b981"
+    fig, ax = plt.subplots(figsize=(4.0, 2.5), facecolor="#0c0e16")
+    ax.set_facecolor("#0c0e16")
+    ax.add_patch(
+        Wedge(
             (0, 0),
             1.0,
-            end_angle,
+            0,
             180,
             width=0.32,
-            facecolor=fill_color,
-            edgecolor="none",
-            alpha=0.85,
+            facecolor="#1e1e30",
+            edgecolor="#2a2a44",
+            lw=1.0,
         )
-        ax.add_patch(filled)
-
-    angle_rad = math.radians(end_angle)
-    nx = 0.74 * math.cos(angle_rad)
-    ny = 0.74 * math.sin(angle_rad)
+    )
+    ea = 180 - prob * 180
+    if prob > 0.001:
+        ax.add_patch(
+            Wedge(
+                (0, 0),
+                1.0,
+                ea,
+                180,
+                width=0.32,
+                facecolor=fc,
+                edgecolor="none",
+                alpha=0.85,
+            )
+        )
+    ar = math.radians(ea)
     ax.annotate(
         "",
-        xy=(nx, ny),
+        xy=(0.74 * math.cos(ar), 0.74 * math.sin(ar)),
         xytext=(0, 0),
-        arrowprops=dict(arrowstyle="-|>", color="#94a3b8", lw=1.8, mutation_scale=12),
+        arrowprops=dict(arrowstyle="-|>", color="#a5a5c0", lw=1.8, mutation_scale=12),
     )
-    ax.plot(0, 0, "o", color="#94a3b8", markersize=4.5, zorder=5)
-
-    for pos, label in [(-1.05, "0%"), (0, "50%"), (1.05, "100%")]:
-        y = 1.12 if label == "50%" else -0.10
+    ax.plot(0, 0, "o", color="#a5a5c0", markersize=4.5, zorder=5)
+    for p, l in [(-1.05, "0%"), (0, "50%"), (1.05, "100%")]:
         ax.text(
-            pos,
-            y,
-            label,
-            color="#475569",
+            p,
+            1.12 if l == "50%" else -0.10,
+            l,
+            color="#555570",
             fontsize=7,
             ha="center",
             fontfamily="monospace",
         )
-
     ax.text(
         0,
         -0.34,
@@ -291,10 +293,9 @@ def make_gauge(prob: float) -> plt.Figure:
         va="center",
         fontsize=20,
         fontweight="bold",
-        color=fill_color,
+        color=fc,
         fontfamily="monospace",
     )
-
     ax.set_xlim(-1.3, 1.3)
     ax.set_ylim(-0.52, 1.22)
     ax.axis("off")
@@ -302,26 +303,21 @@ def make_gauge(prob: float) -> plt.Figure:
     return fig
 
 
-# ── Tab 1: Quick Predict ────────────────────────────────────────────────────
 def predict(*args):
     vec = encode_input(*args)
     prob = float(model.predict_proba(vec)[0][1])
     pred = model.predict(vec)[0]
-
     label = "CHURN" if pred == 1 else "NO CHURN"
     risk = "High" if prob >= 0.7 else ("Medium" if prob >= 0.4 else "Low")
-    risk_color = RISK_COLORS[risk]
-    label_color = "#ef4444" if pred == 1 else "#22c55e"
-
-    result_md = f"""<div style="text-align:center;padding:16px 0 12px;">
-      <span style="font-size:1.5rem;font-weight:700;color:{label_color};
-            letter-spacing:.06em;">{label}</span><br>
-      <span style="color:#94a3b8;font-size:0.82rem;margin-top:6px;display:inline-block;">
-        Risk: <b style="color:{risk_color}">{risk}</b>&nbsp;&nbsp;·&nbsp;&nbsp;
-        Probability: <b style="color:#e2e8f0">{prob * 100:.1f}%</b>
-      </span>
-    </div>"""
-    return result_md, make_gauge(prob)
+    rc = RISK_COLORS[risk]
+    lc = "#f43f5e" if pred == 1 else "#10b981"
+    md = (
+        f'<div style="text-align:center;padding:16px 0 12px;">'
+        f'<span style="font-size:1.5rem;font-weight:700;color:{lc};letter-spacing:.06em;">{label}</span><br>'
+        f'<span style="color:#a5a5c0;font-size:0.82rem;margin-top:6px;display:inline-block;">'
+        f'Risk: <b style="color:{rc}">{risk}</b> &middot; Probability: <b style="color:#e4e4f0">{prob * 100:.1f}%</b></span></div>'
+    )
+    return md, make_gauge(prob)
 
 
 def fill_example(idx: int):
@@ -349,15 +345,14 @@ def fill_example(idx: int):
     )
 
 
-# ── Tab 2: AI Agent Analysis ────────────────────────────────────────────────
-def _no_key_error(msg: str = ""):
+def _no_key_error(msg=""):
     return (
-        f'<div style="background:#1a1020;border:1px solid #7c3aed33;border-radius:10px;'
-        f'padding:24px;font-family:system-ui;color:#c084fc;text-align:center;">'
-        f"<b>⚠ Agent Unavailable</b><br><br>"
+        f'<div style="background:#1a0a1e;border:1px solid #a855f733;border-radius:12px;'
+        f'padding:32px;font-family:system-ui;color:#c084fc;text-align:center;">'
+        f'<div style="font-size:1.2rem;font-weight:700;margin-bottom:12px;">Agent Unavailable</div>'
+        f'<div style="font-size:0.85rem;color:#a78bfa;">'
         f"{'Error: ' + msg + '<br><br>' if msg else ''}"
-        f"Set your <code>GROQ_API_KEY</code> in <code>.env</code>.<br>"
-        f"Quick Predict still works without it.</div>"
+        f'Set your <code style="background:#2a1040;padding:2px 8px;border-radius:4px;">GROQ_API_KEY</code> in <code style="background:#2a1040;padding:2px 8px;border-radius:4px;">.env</code></div></div>'
     ), ""
 
 
@@ -403,85 +398,105 @@ def run_agent_with_rag(
         "paperless": paperless,
         "payment": payment,
     }
-
     api_key = os.getenv("GROQ_API_KEY", "")
     if not api_key or api_key == "your_groq_api_key_here":
         return _no_key_error()
-
     try:
         from agent.churn_agent import get_agent
 
-        agent = get_agent()
-        state = agent.run(features)
+        state = get_agent().run(features)
     except Exception as exc:
         return _no_key_error(str(exc))
-
     if state.get("error"):
         return _no_key_error(state["error"])
 
     prob = state["churn_probability"]
     risk = state["risk_level"]
-    rc = RISK_COLORS.get(risk, "#94a3b8")
+    rc = RISK_COLORS.get(risk, "#a5a5c0")
+    glow = RISK_GLOWS.get(risk, "rgba(165,165,192,.15)")
 
-    # ── Risk factors as tags ────────────────────────────────────────────
     factors_html = ""
     for f in state.get("risk_factors", []):
-        factors_html += f'<span style="display:inline-block;background:{rc}18;color:{rc};border:1px solid {rc}44;border-radius:20px;padding:4px 14px;margin:3px 4px;font-size:0.8rem;">{f}</span>'
+        factors_html += (
+            f'<span style="display:inline-flex;align-items:center;gap:5px;'
+            f"background:{rc}15;color:{rc};border:1px solid {rc}40;"
+            f"border-radius:20px;padding:5px 14px;margin:3px 4px;"
+            f'font-size:0.78rem;font-weight:500;backdrop-filter:blur(4px);">'
+            f"{SVG['zap']}{f}</span>"
+        )
 
-    # ── Recommendations as numbered cards ────────────────────────────────
     recs = state.get("recommendations", [])
     recs_html = ""
     for i, r in enumerate(recs, 1):
-        recs_html += f"""
-        <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;">
-          <div style="min-width:32px;height:32px;border-radius:8px;background:#0ea5e918;
-                      color:#38bdf8;display:flex;align-items:center;justify-content:center;
-                      font-weight:700;font-size:0.85rem;border:1px solid #0ea5e933;">{i}</div>
-          <div style="flex:1;color:#cbd5e1;font-size:0.88rem;line-height:1.55;padding-top:4px;">{r}</div>
-        </div>"""
+        colors = ["#6366f1", "#8b5cf6", "#a855f7"]
+        c = colors[(i - 1) % 3]
+        recs_html += (
+            f'<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;">'
+            f'<div style="min-width:34px;height:34px;border-radius:10px;background:{c}18;'
+            f"color:{c};display:flex;align-items:center;justify-content:center;"
+            f"font-weight:700;font-size:0.85rem;border:1px solid {c}33;"
+            f'box-shadow:0 0 12px {c}15;">{i}</div>'
+            f'<div style="flex:1;color:#d4d4e8;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
+        )
 
     output = f"""
-    <div style="font-family:system-ui,-apple-system,sans-serif;">
+    <div style="font-family:'Inter',system-ui,-apple-system,sans-serif;">
 
-      <!-- ═══ Risk Score Hero ═══ -->
-      <div style="text-align:center;padding:24px 0 18px;border-bottom:1px solid #263a50;margin-bottom:20px;">
-        <div style="font-size:3rem;font-weight:800;color:{rc};letter-spacing:-.02em;">{prob:.1%}</div>
-        <div style="margin-top:6px;">
-          <span style="background:{rc}20;color:{rc};border:1px solid {rc}55;border-radius:6px;
-                padding:5px 18px;font-size:0.9rem;font-weight:700;letter-spacing:.04em;">{risk.upper()} RISK</span>
+      <!-- Risk Score -->
+      <div style="text-align:center;padding:28px 0 20px;position:relative;">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,{glow} 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="position:relative;font-size:3.2rem;font-weight:800;color:{rc};
+                    letter-spacing:-.03em;text-shadow:0 0 40px {glow};">{prob:.1%}</div>
+        <div style="position:relative;margin-top:8px;">
+          <span style="background:{rc}20;color:{rc};border:1px solid {rc}55;
+                border-radius:8px;padding:6px 20px;font-size:0.88rem;
+                font-weight:700;letter-spacing:.06em;
+                box-shadow:0 0 16px {glow};">{risk.upper()} RISK</span>
         </div>
       </div>
 
-      <!-- ═══ Risk Factors ═══ -->
-      <div style="margin-bottom:24px;">
-        <div style="color:#64748b;font-size:0.7rem;text-transform:uppercase;letter-spacing:.1em;
-                    margin-bottom:10px;font-weight:600;">Identified Risk Factors</div>
-        <div style="line-height:2.2;">{factors_html}</div>
+      <div style="height:1px;background:linear-gradient(90deg,transparent,#2a2a44,transparent);margin:0 0 24px;"></div>
+
+      <!-- Risk Factors -->
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.68rem;
+                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600;">
+          <span style="color:{rc};">{SVG["risk"]}</span> Identified Risk Factors
+        </div>
+        <div style="line-height:2.4;">{factors_html}</div>
       </div>
 
-      <!-- ═══ Explanation ═══ -->
-      <div style="background:#162231;border:1px solid #263a50;border-radius:10px;
-                  padding:20px 22px;margin-bottom:24px;">
-        <div style="color:#64748b;font-size:0.7rem;text-transform:uppercase;letter-spacing:.1em;
-                    margin-bottom:10px;font-weight:600;">Why This Customer Is at Risk</div>
-        <div style="color:#cbd5e1;font-size:0.92rem;line-height:1.7;">
+      <!-- Explanation -->
+      <div style="background:linear-gradient(135deg,#14142a,#1a1a36);border:1px solid #2a2a50;
+                  border-radius:12px;padding:22px 24px;margin-bottom:28px;
+                  box-shadow:0 4px 24px rgba(0,0,0,.2);">
+        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.68rem;
+                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600;">
+          <span style="color:#a78bfa;">{SVG["brain"]}</span> Why This Customer Is at Risk
+        </div>
+        <div style="color:#d4d4e8;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
         </div>
       </div>
 
-      <!-- ═══ Recommendations ═══ -->
-      <div style="margin-bottom:24px;">
-        <div style="color:#64748b;font-size:0.7rem;text-transform:uppercase;letter-spacing:.1em;
-                    margin-bottom:14px;font-weight:600;">Recommended Retention Actions</div>
+      <!-- Recommendations -->
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.68rem;
+                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px;font-weight:600;">
+          <span style="color:#6366f1;">{SVG["lightbulb"]}</span> Recommended Retention Actions
+        </div>
         {recs_html}
       </div>
 
-      <!-- ═══ Executive Summary ═══ -->
-      <div style="background:#0c1a2e;border-left:3px solid #0ea5e9;border-radius:0 8px 8px 0;
-                  padding:14px 20px;margin-bottom:8px;">
-        <div style="color:#64748b;font-size:0.65rem;text-transform:uppercase;letter-spacing:.1em;
-                    margin-bottom:6px;font-weight:600;">Executive Summary</div>
-        <div style="color:#e2e8f0;font-size:0.9rem;line-height:1.6;font-style:italic;">
+      <!-- Executive Summary -->
+      <div style="background:linear-gradient(90deg,#6366f115,transparent);
+                  border-left:3px solid #6366f1;border-radius:0 10px 10px 0;
+                  padding:16px 22px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;color:#8888a8;font-size:0.65rem;
+                    text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:600;">
+          <span style="color:#818cf8;">{SVG["target"]}</span> Executive Summary
+        </div>
+        <div style="color:#e4e4f0;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
         </div>
       </div>
@@ -492,77 +507,75 @@ def run_agent_with_rag(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STYLING
+# STYLING — Vibrant dark theme with indigo/violet accents
 # ══════════════════════════════════════════════════════════════════════════════
 
 css = """
-/* ── Reset & Base ───────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; }
 
 body, .gradio-container, gradio-app, .wrap {
-    background: #0f1923 !important;
+    background: #0c0e16 !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-    color: #e2e8f0 !important;
+    color: #e4e4f0 !important;
 }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
 #app-header {
-    text-align: center;
-    padding: 28px 0 18px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid #263a50;
+    text-align: center; padding: 30px 0 20px; margin-bottom: 20px;
+    border-bottom: 1px solid #2a2a44;
+    background: linear-gradient(180deg, #12122a 0%, transparent 100%);
 }
 #app-header h1 {
-    margin: 0; font-size: 1.5rem; font-weight: 700;
-    color: #f1f5f9; letter-spacing: -.01em;
+    margin: 0; font-size: 1.6rem; font-weight: 800; color: #f0f0ff;
+    letter-spacing: -.02em;
+    background: linear-gradient(135deg, #e4e4f0, #a5b4fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 #app-header p {
-    margin: 8px 0 0; font-size: 0.78rem; color: #64748b;
+    margin: 10px 0 0; font-size: 0.78rem; color: #6366f1;
+    font-weight: 500; letter-spacing: .04em;
 }
 
-/* ── Panels / Cards ────────────────────────────────────────────────────── */
+/* ── Panels ────────────────────────────────────────────────────────────── */
 .gr-group, .gr-box, .block {
-    background: #162231 !important;
-    border: 1px solid #263a50 !important;
-    border-radius: 10px !important;
+    background: #12122a !important;
+    border: 1px solid #2a2a50 !important;
+    border-radius: 12px !important;
 }
 
 /* ── Top Tabs ──────────────────────────────────────────────────────────── */
 .tab-nav button {
     font-family: 'Inter', system-ui, sans-serif !important;
-    font-size: 0.8rem !important;
-    color: #64748b !important; background: transparent !important;
-    border: none !important;
-    border-bottom: 2px solid transparent !important;
-    padding: 10px 24px !important; border-radius: 0 !important;
-    text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
-    transition: color .15s, border-color .15s;
+    font-size: 0.82rem !important; font-weight: 600 !important;
+    color: #555575 !important; background: transparent !important;
+    border: none !important; border-bottom: 2px solid transparent !important;
+    padding: 12px 28px !important; border-radius: 0 !important;
+    text-transform: uppercase; letter-spacing: .08em;
+    transition: color .2s, border-color .2s;
 }
 .tab-nav button.selected {
-    color: #e2e8f0 !important;
-    border-bottom-color: #0ea5e9 !important;
+    color: #e4e4f0 !important;
+    border-bottom-color: #6366f1 !important;
     background: transparent !important;
 }
 .tab-nav button:hover {
-    color: #94a3b8 !important;
-    background: transparent !important;
+    color: #a5a5c0 !important; background: transparent !important;
 }
-.tabitem { padding: 12px 0 0 !important; }
+.tabitem { padding: 14px 0 0 !important; }
 
-/* ── Inner Tabs (Demographics/Account/Services) ────────────────────────── */
+/* ── Inner Tabs ────────────────────────────────────────────────────────── */
 .tabitem .tab-nav button {
-    font-size: 0.72rem !important;
-    padding: 6px 14px !important;
+    font-size: 0.74rem !important; padding: 7px 16px !important;
     letter-spacing: .06em;
 }
 .tabitem .tab-nav button.selected {
-    border-bottom-color: #38bdf8 !important;
-    color: #cbd5e1 !important;
+    border-bottom-color: #818cf8 !important; color: #c4b5fd !important;
 }
 
-/* ── Field Labels ──────────────────────────────────────────────────────── */
-label, label span,
-.label-wrap, .label-wrap span,
+/* ── Labels ────────────────────────────────────────────────────────────── */
+label, label span, .label-wrap, .label-wrap span,
 .block > label, .block > label > span,
 .block label, .block label span,
 .form label, .form label span,
@@ -570,126 +583,126 @@ span.svelte-1gfkn6j, span.svelte-1b6s6vi,
 [class*="label"] {
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.72rem !important;
-    color: #94a3b8 !important;
+    color: #8888a8 !important;
     text-transform: uppercase; letter-spacing: .05em;
     font-weight: 500 !important;
 }
 
-/* ── Inputs / Dropdowns ────────────────────────────────────────────────── */
+/* ── Inputs ────────────────────────────────────────────────────────────── */
 input[type="number"], input[type="text"], textarea, select,
 .gr-input input, .gr-dropdown select {
-    background: #0f1923 !important; border: 1px solid #263a50 !important;
-    border-radius: 8px !important; color: #e2e8f0 !important;
+    background: #0c0e16 !important;
+    border: 1px solid #2a2a50 !important;
+    border-radius: 10px !important;
+    color: #e4e4f0 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.85rem !important;
     text-transform: none !important; letter-spacing: 0 !important;
-    transition: border-color .15s;
+    transition: border-color .2s, box-shadow .2s;
 }
 input:focus, select:focus, textarea:focus {
-    border-color: #0ea5e9 !important;
+    border-color: #6366f1 !important;
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(14,165,233,.1) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15) !important;
 }
 ul[role="listbox"], ul[role="listbox"] li,
 .multiselect span, input.svelte-1gfkn6j,
-[data-testid="dropdown"] input,
-[data-testid="dropdown"] span {
+[data-testid="dropdown"] input, [data-testid="dropdown"] span {
     text-transform: none !important; letter-spacing: 0 !important;
-    font-size: 0.85rem !important; color: #e2e8f0 !important;
+    font-size: 0.85rem !important; color: #e4e4f0 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
 }
 
 /* ── Agent Button ──────────────────────────────────────────────────────── */
 .agent-btn {
-    background: linear-gradient(135deg, #0c4a6e, #0e3a5c) !important;
-    color: #7dd3fc !important;
-    border: 1px solid #0ea5e944 !important;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    color: #fff !important;
+    border: none !important;
     font-family: 'Inter', system-ui, sans-serif !important;
-    font-size: 0.85rem !important; font-weight: 700 !important;
-    border-radius: 10px !important; padding: 12px 0 !important;
-    letter-spacing: .04em; width: 100% !important;
-    transition: all .2s; cursor: pointer;
+    font-size: 0.88rem !important; font-weight: 700 !important;
+    border-radius: 12px !important; padding: 14px 0 !important;
+    letter-spacing: .03em; width: 100% !important;
+    transition: all .25s; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(99,102,241,.3);
 }
 .agent-btn:hover {
-    background: linear-gradient(135deg, #0e5a82, #0f4a6e) !important;
-    border-color: #0ea5e966 !important;
-    color: #bae6fd !important;
-    box-shadow: 0 4px 20px rgba(14,165,233,.15);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    box-shadow: 0 6px 32px rgba(99,102,241,.45);
+    transform: translateY(-1px);
 }
 
 /* ── Predict Button ────────────────────────────────────────────────────── */
 .predict-btn {
-    background: #162231 !important; color: #94a3b8 !important;
-    border: 1px solid #263a50 !important;
+    background: #12122a !important; color: #a5a5c0 !important;
+    border: 1px solid #2a2a50 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 0.82rem !important; font-weight: 600 !important;
-    border-radius: 8px !important; padding: 10px 0 !important;
+    border-radius: 10px !important; padding: 12px 0 !important;
     letter-spacing: .04em; width: 100% !important;
-    transition: all .15s;
+    transition: all .2s;
 }
 .predict-btn:hover {
-    background: #1b2b3d !important; border-color: #334155 !important;
-    color: #cbd5e1 !important;
+    background: #1a1a3a !important; border-color: #6366f155 !important;
+    color: #e4e4f0 !important;
+    box-shadow: 0 0 16px rgba(99,102,241,.1);
 }
 
 /* ── Example Buttons ───────────────────────────────────────────────────── */
 .ex-btn {
-    background: #162231 !important; color: #94a3b8 !important;
-    border: 1px solid #263a50 !important;
+    background: #12122a !important; color: #8888a8 !important;
+    border: 1px solid #2a2a50 !important;
     font-family: 'Inter', system-ui, sans-serif !important;
-    font-size: 0.75rem !important; border-radius: 8px !important;
-    padding: 8px 10px !important; flex: 1 !important;
-    transition: all .15s; font-weight: 500;
+    font-size: 0.72rem !important; border-radius: 10px !important;
+    padding: 7px 10px !important; flex: 1 !important;
+    transition: all .2s; font-weight: 500;
 }
 .ex-btn:hover {
-    color: #e2e8f0 !important; border-color: #0ea5e944 !important;
-    background: #1b2b3d !important;
+    color: #e4e4f0 !important; border-color: #6366f155 !important;
+    background: #1a1a3a !important;
+    box-shadow: 0 0 12px rgba(99,102,241,.08);
 }
 
-/* ── Agent Output Container ────────────────────────────────────────────── */
+/* ── Agent Output ──────────────────────────────────────────────────────── */
 .agent-output {
-    background: #0f1923 !important;
-    border: 1px solid #263a50 !important;
-    border-radius: 10px !important;
-    padding: 0 !important;
-    min-height: 400px;
+    background: #0c0e16 !important;
+    border: 1px solid #2a2a50 !important;
+    border-radius: 14px !important;
+    padding: 0 24px !important;
+    min-height: 420px;
     overflow-y: auto;
+    box-shadow: inset 0 2px 12px rgba(0,0,0,.2);
 }
 
 /* ── Result Box ────────────────────────────────────────────────────────── */
 #result-box {
-    background: #162231 !important; border: 1px solid #263a50 !important;
-    border-radius: 10px !important; min-height: 78px;
+    background: #12122a !important; border: 1px solid #2a2a50 !important;
+    border-radius: 12px !important; min-height: 78px;
 }
 
 /* ── Gauge ─────────────────────────────────────────────────────────────── */
 #gauge-plot { background: transparent !important; border: none !important; }
 
-/* ── Section Label ─────────────────────────────────────────────────────── */
+/* ── Section Labels ────────────────────────────────────────────────────── */
 .slabel {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.68rem; color: #64748b;
-    text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
-    padding: 4px 0 8px; border-bottom: 1px solid #1e3048; margin-bottom: 10px;
-}
-
-/* ── Accordion ─────────────────────────────────────────────────────────── */
-.accordan-header, .accordion .label-wrap {
-    color: #64748b !important;
-    font-size: 0.72rem !important;
+    font-size: 0.65rem; color: #555575;
+    text-transform: uppercase; letter-spacing: .12em; font-weight: 600;
+    padding: 4px 0 8px; border-bottom: 1px solid #1e1e38; margin-bottom: 10px;
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #263a50; border-radius: 5px; }
-::-webkit-scrollbar-thumb:hover { background: #334155; }
+::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a60; }
+
+/* ── Gradio built-in overrides ─────────────────────────────────────────── */
+footer { display: none !important; }
 """
 
 
 # ── Shared input builder ────────────────────────────────────────────────────
 def _build_input_tabs():
-    """Create the three-tab input layout. Returns list of components."""
     with gr.Tabs():
         with gr.Tab("Demographics"):
             with gr.Group():
@@ -812,54 +825,67 @@ def _build_input_tabs():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# LAYOUT — Agent Tab First
+# LAYOUT
 # ══════════════════════════════════════════════════════════════════════════════
 with gr.Blocks(
     theme=gr.themes.Base(), css=css, title="Customer Churn Predictor"
 ) as demo:
-    gr.HTML("""
+    # ── Header with gradient logo bar ─────────────────────────────────────
+    gr.HTML(f"""
     <div id="app-header">
+      <div style="width:48px;height:48px;margin:0 auto 14px;border-radius:14px;
+                  background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;
+                  align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(99,102,241,.35);">
+        {SVG["agent"].replace('width="18"', 'width="26"').replace('height="18"', 'height="26"').replace('stroke="currentColor"', 'stroke="#fff"')}
+      </div>
       <h1>Customer Churn Predictor</h1>
-      <p>Agentic AI &nbsp;·&nbsp; LangGraph + RAG &nbsp;·&nbsp; Groq LLM &nbsp;·&nbsp; Telco Dataset</p>
+      <p>Agentic AI &nbsp;&middot;&nbsp; LangGraph + RAG &nbsp;&middot;&nbsp; Groq LLM &nbsp;&middot;&nbsp; Telco Dataset</p>
     </div>
     """)
 
     # ═══════════════════════════════════════════════════════════════════════
-    # TAB 1: AI Agent Analysis (PRIMARY — loads first)
+    # TAB 1: AI Agent Analysis (PRIMARY)
     # ═══════════════════════════════════════════════════════════════════════
-    with gr.Tab("🤖 AI Agent Analysis"):
+    with gr.Tab("AI Agent Analysis"):
         with gr.Row():
-            with gr.Column(scale=5, min_width=330):
+            # ── Left: Inputs + Button + Profiles (always visible) ───────
+            with gr.Column(scale=4, min_width=320):
                 tab2_inputs = _build_input_tabs()
-                agent_btn = gr.Button(
-                    "🤖  Run Agent Analysis", elem_classes=["agent-btn"]
-                )
 
-            with gr.Column(scale=5, min_width=380):
+                agent_btn = gr.Button("Run Agent Analysis", elem_classes=["agent-btn"])
+
+                # Profiles RIGHT under the button
+                gr.HTML('<div class="slabel">Quick-Start Profiles</div>')
+                with gr.Row():
+                    for i, ep in enumerate(EXAMPLE_PROFILES):
+                        b = gr.Button(ep["label"], elem_classes=["ex-btn"])
+                        b.click(
+                            fn=lambda idx=i: fill_example(idx),
+                            inputs=[],
+                            outputs=tab2_inputs,
+                        )
+
+            # ── Right: Analysis Output ──────────────────────────────────
+            with gr.Column(scale=6, min_width=420):
                 gr.HTML('<div class="slabel">Analysis Report</div>')
                 agent_output = gr.HTML(
-                    value='<div style="text-align:center;color:#475569;padding:80px 20px;'
-                    'font-family:system-ui;font-size:0.85rem;">'
-                    "Select a customer profile and click <b>Run Agent Analysis</b> "
-                    "to generate a full AI-powered retention report.</div>",
+                    value='<div style="text-align:center;color:#44446a;padding:100px 24px;'
+                    'font-family:system-ui;font-size:0.88rem;line-height:1.8;">'
+                    '<div style="font-size:2rem;margin-bottom:12px;opacity:.4;">'
+                    + SVG["agent"]
+                    .replace('stroke="currentColor"', 'stroke="#44446a"')
+                    .replace('width="18"', 'width="36"')
+                    .replace('height="18"', 'height="36"')
+                    + "</div>"
+                    "Select a customer profile and click<br>"
+                    '<b style="color:#6366f1;">Run Agent Analysis</b> to generate<br>'
+                    "a full AI-powered retention report.</div>",
                     elem_classes=["agent-output"],
                 )
-                with gr.Accordion("📄 Retrieved Knowledge (RAG)", open=False):
+                with gr.Accordion("Retrieved Knowledge (RAG)", open=False):
                     rag_context = gr.Textbox(
-                        label="Source Chunks Used by Agent",
-                        lines=6,
-                        interactive=False,
+                        label="Source Chunks", lines=5, interactive=False
                     )
-
-        gr.HTML(
-            '<div class="slabel" style="margin-top:16px">Quick-Start Profiles</div>'
-        )
-        with gr.Row():
-            for i, ep in enumerate(EXAMPLE_PROFILES):
-                btn2 = gr.Button(ep["label"], elem_classes=["ex-btn"])
-                btn2.click(
-                    fn=lambda idx=i: fill_example(idx), inputs=[], outputs=tab2_inputs
-                )
 
         agent_btn.click(
             fn=run_agent_with_rag,
@@ -870,31 +896,29 @@ with gr.Blocks(
     # ═══════════════════════════════════════════════════════════════════════
     # TAB 2: Quick Predict (SECONDARY)
     # ═══════════════════════════════════════════════════════════════════════
-    with gr.Tab("📊 Quick Predict"):
+    with gr.Tab("Quick Predict"):
         with gr.Row():
-            with gr.Column(scale=5, min_width=330):
+            with gr.Column(scale=5, min_width=320):
                 tab1_inputs = _build_input_tabs()
+                predict_btn = gr.Button("Predict Churn", elem_classes=["predict-btn"])
 
-            with gr.Column(scale=4, min_width=260):
+                gr.HTML('<div class="slabel">Quick-Start Profiles</div>')
+                with gr.Row():
+                    for i, ep in enumerate(EXAMPLE_PROFILES):
+                        b = gr.Button(ep["label"], elem_classes=["ex-btn"])
+                        b.click(
+                            fn=lambda idx=i: fill_example(idx),
+                            inputs=[],
+                            outputs=tab1_inputs,
+                        )
+
+            with gr.Column(scale=4, min_width=280):
                 gr.HTML('<div class="slabel">Churn Risk Gauge</div>')
                 gauge_plot = gr.Plot(show_label=False, elem_id="gauge-plot")
                 result_box = gr.Markdown(
-                    value='<div style="text-align:center;color:#475569;padding:20px 0;'
+                    value='<div style="text-align:center;color:#44446a;padding:20px 0;'
                     'font-size:0.82rem;">run prediction to see result</div>',
                     elem_id="result-box",
-                )
-                predict_btn = gr.Button(
-                    "▶  Predict Churn", elem_classes=["predict-btn"]
-                )
-
-        gr.HTML(
-            '<div class="slabel" style="margin-top:16px">Quick-Start Profiles</div>'
-        )
-        with gr.Row():
-            for i, ep in enumerate(EXAMPLE_PROFILES):
-                btn = gr.Button(ep["label"], elem_classes=["ex-btn"])
-                btn.click(
-                    fn=lambda idx=i: fill_example(idx), inputs=[], outputs=tab1_inputs
                 )
 
         predict_btn.click(
