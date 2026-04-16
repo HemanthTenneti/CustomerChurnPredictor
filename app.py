@@ -1030,11 +1030,6 @@ def _build_input_tabs():
 # LAYOUT
 # ══════════════════════════════════════════════════════════════════════════════
 with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
-    # ── Load fix-labels script via external file ──────────────────────────
-    gr.HTML(
-        '<script src="file=/Users/hemanth10etii/Coding/CustomerChurnPredictor/fix-labels.js"></script>'
-    )
-
     # ── Header ────────────────────────────────────────────────────────────
     gr.HTML(f"""
     <div id="app-header">
