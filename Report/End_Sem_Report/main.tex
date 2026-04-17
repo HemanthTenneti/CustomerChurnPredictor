@@ -1,0 +1,82 @@
+\documentclass[12pt,a4paper]{article}
+
+% ── Packages ──
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning}
+
+% ── Code listing style ──
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!10},
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red!70!black},
+}
+
+% ── Title ──
+\title{\textbf{GenAI-Powered Agentic Customer Retention System\\for Telecom Churn Prediction}}
+\author{Hemanth Tenneti}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ── Abstract ──
+\input{sections/abstract}
+
+% ── Sections ──
+\input{sections/introduction}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/conclusion}
+
+% ── References ──
+\begin{thebibliography}{9}
+
+\bibitem{telco}
+Blastchar.
+\textit{Telco Customer Churn Dataset}.
+Kaggle, 2018.
+\url{https://www.kaggle.com/datasets/blastchar/telco-customer-churn}
+
+\bibitem{langgraph}
+LangChain.
+\textit{LangGraph: Building stateful, multi-actor applications with LLMs}.
+GitHub, 2024.
+\url{https://github.com/langchain-ai/langgraph}
+
+\bibitem{lewis2020}
+Patrick Lewis, Ethan Perez, Aleksandra Piktus, et al.
+\textit{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks}.
+In Advances in Neural Information Processing Systems (NeurIPS), 2020.
+
+\bibitem{chromadb}
+Chroma.
+\textit{ChromaDB: The open-source embedding database}.
+Documentation, 2024.
+\url{https://www.trychroma.com/}
+
+\bibitem{churn_survey}
+A.~De~Caigny, K.~Coussement, and K.~W.~De~Bock.
+\textit{A New Hybrid Classification Algorithm for Customer Churn Prediction Based on Logistic Regression and Decision Trees}.
+European Journal of Operational Research, 269(2):760--772, 2018.
+
+\bibitem{reimers2019}
+Nils Reimers and Iryna Gurevych.
+\textit{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks}.
+In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing (EMNLP), 2019.
+
+\end{thebibliography}
+
+\end{document}

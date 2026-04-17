@@ -1,0 +1,21 @@
+\section{Conclusion}
+
+This project demonstrates how a traditional machine learning churn prediction system can be
+transformed into a comprehensive customer retention decision-support tool through the
+integration of Retrieval-Augmented Generation and agentic AI orchestration. The core
+contribution is the five-node LangGraph agent pipeline that bridges the gap between
+prediction (what will happen) and prescription (what to do about it), providing customer
+service representatives with plain-English explanations, personalized recommendations,
+and relevant domain knowledge---all in a single click.
+
+The Logistic Regression model achieves an F1-score of 0.609 and ROC-AUC of 0.842, providing
+a reliable churn probability signal. The RAG pipeline, built on ChromaDB and
+\texttt{all-MiniLM-L6-v2} embeddings, operates entirely locally with zero API cost. The
+LangGraph agent coordinates these components with Groq's \texttt{llama3-70b-8192} LLM to
+produce actionable retention reports in 5--15 seconds.
+
+Future work includes: (1) implementing a feedback loop to track recommendation effectiveness
+and refine the knowledge base, (2) integrating live CRM data for real-time customer
+monitoring, (3) fine-tuning the LLM on telecom-specific retention conversation transcripts,
+and (4) exploring multi-agent architectures where specialized agents handle different
+customer segments independently.

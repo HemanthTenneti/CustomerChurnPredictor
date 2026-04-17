@@ -1,0 +1,145 @@
+\section{System Architecture}
+
+The system follows a three-layer architecture designed for modularity, offline capability,
+and incremental enhancement:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{ML Prediction Layer}: Logistic Regression model with StandardScaler
+        preprocessing, persisted as a \texttt{.pkl} file. Fully offline, no API required.
+    \item \textbf{RAG Knowledge Layer}: ChromaDB vector store populated with chunked
+        retention strategies, embedded locally with \texttt{all-MiniLM-L6-v2}. Zero API cost.
+    \item \textbf{LangGraph Orchestration Layer}: A five-node state graph that coordinates
+        prediction, retrieval, LLM explanation, recommendation, and summarization via
+        Groq's \texttt{llama3-70b-8192}.
+\end{enumerate}
+
+% Architecture diagram
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+    node distance=1.4cm and 2.0cm,
+    box/.style={rectangle, draw, rounded corners, minimum width=2.8cm,
+                minimum height=0.9cm, align=center, font=\small},
+    arrow/.style={-{Stealth[length=3mm]}, thick},
+]
+    \node[box, fill=blue!15] (user) {User};
+    \node[box, fill=green!15, right=of user] (gradio) {Gradio UI\\(Two Tabs)};
+    \node[box, fill=orange!15, right=of gradio] (graph) {LangGraph\\Agent};
+    \node[box, fill=yellow!20, above=of graph] (chroma) {ChromaDB\\(RAG)};
+    \node[box, fill=red!15, below=of graph] (groq) {Groq LLM\\(llama3-70b)};
+    \node[box, fill=purple!15, left=of graph] (ml) {ML Model\\(LogReg)};
+
+    \draw[arrow] (user) -- (gradio);
+    \draw[arrow] (gradio) -- (ml);
+    \draw[arrow] (gradio) -- (graph);
+    \draw[arrow] (graph) -- (chroma);
+    \draw[arrow] (graph) -- (groq);
+    \draw[arrow] (graph) -- (ml);
+\end{tikzpicture}
+\caption{Three-layer architecture: ML Prediction, RAG Knowledge, and LangGraph Orchestration.}
+\end{figure}
+
+\subsection{Data Preprocessing}
+\label{sec:preprocessing}
+
+The preprocessing pipeline follows these steps:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{TotalCharges} conversion: coerced to numeric; 11 blank strings filled with the column median.
+    \item \textbf{customerID} dropped (non-predictive identifier).
+    \item \textbf{Churn} mapped: \texttt{Yes $\rightarrow$ 1}, \texttt{No $\rightarrow$ 0}.
+    \item \textbf{Categorical encoding}: one-hot via \texttt{pd.get\_dummies(drop\_first=True)}, yielding 30 feature columns.
+    \item \textbf{Train/test split}: 80/20 stratified on Churn, \texttt{random\_state=42}.
+    \item \textbf{StandardScaler}: fit on training set only; applied to both splits.
+\end{enumerate}
+
+\subsection{ML Model Selection}
+\label{sec:model_selection}
+
+Five classification models were benchmarked on the held-out 20\% test set:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{F1-Score} & \textbf{ROC-AUC} \\
+\midrule
+Logistic Regression   & 0.8070 & 0.6584 & \textbf{0.6092} & \textbf{0.8416} \\
+Linear Regression     & 0.7963 & 0.6426 & 0.5773 & 0.8301 \\
+Random Forest         & 0.7864 & 0.6237 & 0.5501 & 0.8251 \\
+XGBoost               & 0.7850 & 0.6079 & 0.5690 & 0.8214 \\
+Decision Tree         & 0.7559 & 0.5387 & 0.5486 & 0.7607 \\
+\bottomrule
+\end{tabular}
+\caption{Model performance comparison on the test set.}
+\label{tab:models}
+\end{table}
+
+Logistic Regression was selected as the production model based on the highest F1-Score
+(0.6092) and ROC-AUC (0.8416). Its interpretability---feature coefficients directly
+indicate churn risk contribution---also makes it suitable for an agent system that must
+explain predictions.
+
+\subsection{RAG Pipeline}
+\label{sec:rag}
+
+The RAG pipeline ingests a curated knowledge base of telecom retention strategies:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Source}: \texttt{retention\_strategies.md}---an 800+ word document covering
+        eight retention strategy categories.
+    \item \textbf{Chunking}: \texttt{RecursiveCharacterTextSplitter} with
+        \texttt{chunk\_size=400} and \texttt{chunk\_overlap=80}.
+    \item \textbf{Embedding}: \texttt{all-MiniLM-L6-v2} from Sentence Transformers---384-dimensional
+        embeddings computed locally with no API key required.
+    \item \textbf{Vector Store}: ChromaDB persisted to \texttt{rag/chroma\_db/}---local,
+        persistent, zero API cost. ChromaDB was chosen over Pinecone or Weaviate for its
+        local-first design, eliminating network dependencies during development.
+\end{enumerate}
+
+\subsection{LangGraph Agent Design}
+\label{sec:agent}
+
+The agent is implemented as a LangGraph \texttt{StateGraph} with five sequential nodes:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{predict}: Runs the Logistic Regression model on the encoded customer features.
+        Populates \texttt{churn\_probability}, \texttt{churn\_prediction}, and \texttt{risk\_level}
+        (Low/Medium/High thresholds: $<$0.4, 0.4--0.7, $\geq$0.7).
+    \item \textbf{retrieve\_context}: Queries the ChromaDB retriever with a formatted query
+        combining the risk level and identified risk factors. Returns top-3 chunks.
+    \item \textbf{explain}: Calls the Groq LLM with the customer profile, probability, and
+        retrieved context. Produces a 3--4 sentence plain-English explanation.
+    \item \textbf{recommend}: Calls the Groq LLM with the explanation and context. Produces
+        exactly three numbered, personalized, actionable recommendations.
+    \item \textbf{format\_output}: Calls the Groq LLM for a single executive-summary sentence
+        (under 25 words).
+\end{enumerate}
+
+Each node is wrapped in an error-catching handler. On failure, the \texttt{error} field is
+populated with a user-friendly message and the graph routes to END, preventing the Gradio
+app from crashing. The agent is initialized lazily via a module-level singleton.
+
+The state schema is defined as a \texttt{TypedDict} with fields: \texttt{customer\_features},
+\texttt{churn\_probability}, \texttt{churn\_prediction}, \texttt{risk\_level},
+\texttt{risk\_factors}, \texttt{retrieved\_context}, \texttt{explanation},
+\texttt{recommendations}, \texttt{executive\_summary}, and \texttt{error}.
+
+\subsection{Prompt Engineering}
+\label{sec:prompts}
+
+Three \texttt{ChatPromptTemplate} prompts drive the LLM interactions:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{EXPLANATION\_PROMPT}: System persona is a senior customer success analyst.
+        Instructs the LLM to explain in 3--4 plain-English sentences why the customer is at
+        risk, referencing specific feature values. Tone: professional, empathetic, data-grounded.
+        Output: one paragraph only, no ML jargon.
+    \item \textbf{RECOMMENDATION\_PROMPT}: System persona is a retention specialist. Produces
+        exactly three numbered, personalized, actionable recommendations. Each must reference
+        the customer's specific situation. Output: numbered list only, no preamble.
+    \item \textbf{SUMMARY\_PROMPT}: Generates a single executive-summary sentence under 25
+        words. Output: exactly one sentence.
+\end{enumerate}
+
+All prompts are defined exclusively in \texttt{agent/prompts.py}. No prompt strings appear
+elsewhere in the codebase, enabling centralized prompt iteration without touching agent logic.
