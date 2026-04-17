@@ -1,0 +1,17 @@
+\begin{abstract}
+Customer churn is a critical revenue threat for telecommunications companies, where
+acquiring a new subscriber costs approximately five times more than retaining an
+existing one. This project presents a \textbf{GenAI-powered Agentic Customer Retention
+System} that combines traditional machine learning prediction with large language model
+(LLM)-driven explanation and actionable recommendations. A Logistic Regression model
+trained on the IBM Telco Customer Churn dataset (7,043 customers, 20 features) achieves
+an accuracy of 80.7\% and an F1-score of 0.609. A Retrieval-Augmented Generation (RAG)
+pipeline built on ChromaDB and \texttt{all-MiniLM-L6-v2} embeddings provides domain-specific
+retention strategies. A five-node LangGraph state machine orchestrates prediction, context
+retrieval, LLM-powered explanation, recommendation generation, and executive summarization.
+The system is exposed through a dual-tab Gradio interface: a Quick Predict tab for instant
+offline predictions and an AI Agent Analysis tab for comprehensive, personalized retention
+reports powered by Groq's \texttt{llama3-70b-8192} model. The primary contribution is
+demonstrating how agentic AI can transform a purely predictive ML system into a prescriptive
+decision-support tool for customer service representatives.
+\end{abstract}

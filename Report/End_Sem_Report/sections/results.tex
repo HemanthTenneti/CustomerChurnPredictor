@@ -1,0 +1,97 @@
+\section{Results and Discussion}
+
+\subsection{Model Performance}
+
+The final production model (Logistic Regression) achieves the following metrics on the
+held-out 20\% test split (1,409 samples):
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Accuracy}: 80.7\%---correctly classifies the majority of customers.
+    \item \textbf{Precision}: 65.8\%---of customers predicted to churn, about two-thirds
+        actually do.
+    \item \textbf{Recall}: 56.6\%---identifies more than half of actual churners.
+    \item \textbf{F1-Score}: 0.609---balances precision and recall effectively.
+    \item \textbf{ROC-AUC}: 0.842---strong discriminative ability between churners and
+        non-churners.
+\end{itemize}
+
+The confusion matrix for the test set shows 925 true negatives, 212 true positives,
+110 false positives, and 162 false negatives. The model is more conservative in its
+churn predictions, which is appropriate for a retention system where false positives
+(triggering retention outreach for a customer who would have stayed) are less costly
+than false negatives (missing a customer who leaves).
+
+\subsection{Qualitative Agent Evaluation}
+
+To evaluate the agent's effectiveness beyond raw metrics, we tested it on two
+representative customer profiles.
+
+\subsubsection{High-Risk Customer Profile}
+
+\begin{lstlisting}[caption=High-Risk customer input features.]
+senior: No, tenure: 2, monthly: $90, total: $180
+gender: Female, partner: No, dependents: No
+phone: Yes, multilines: No, internet: Fiber optic
+online_sec: No, online_bkp: No, device_prot: No, tech_sup: No
+streaming_tv: Yes, streaming_movies: Yes
+contract: Month-to-month, paperless: Yes
+payment: Electronic check
+\end{lstlisting}
+
+The ML model predicts a churn probability of approximately 85--90\% with a ``High'' risk
+classification. The agent's risk factor identification correctly flags: month-to-month
+contract, short tenure (2 months), fiber optic subscriber, electronic check payment,
+high monthly charges (\$90), and no value-add services.
+
+The LLM-generated explanation correctly references the customer's short tenure, high
+monthly charges, lack of online security and tech support, and month-to-month contract
+as key risk indicators. The tone is professional and avoids ML jargon.
+
+The three recommendations are personalized, referencing specific features of the
+customer's profile and suggesting actionable steps such as contract upgrade offers,
+auto-pay enrollment incentives, and free security add-on trials.
+
+\subsubsection{Loyal Customer Profile}
+
+\begin{lstlisting}[caption=Loyal customer input features.]
+senior: No, tenure: 60, monthly: $55, total: $3300
+gender: Male, partner: Yes, dependents: Yes
+phone: Yes, multilines: Yes, internet: DSL
+online_sec: Yes, online_bkp: Yes, device_prot: Yes, tech_sup: Yes
+streaming_tv: No, streaming_movies: No
+contract: Two year, paperless: No
+payment: Bank transfer (automatic)
+\end{lstlisting}
+
+The model predicts a churn probability under 10\% with a ``Low'' risk classification.
+The agent correctly identifies few or no significant risk factors. The LLM explanation
+acknowledges the customer's strong retention indicators (long tenure, two-year contract,
+comprehensive service bundle) and frames the output as a retention maintenance
+recommendation rather than a crisis intervention.
+
+\subsection{RAG Retrieval Quality}
+
+For the High-Risk profile, the retriever returns chunks covering month-to-month contract
+strategies, electronic check payment retention, and short-tenure onboarding strategies---all
+directly relevant to the customer's identified risk factors. The retrieved context
+meaningfully informs the LLM's recommendations.
+
+For the Loyal profile, the retriever returns general retention principles, which the LLM
+appropriately uses to suggest maintenance actions rather than aggressive retention offers.
+
+\subsection{Limitations}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Hallucination risk}: The LLM may occasionally generate recommendations
+        not grounded in the retrieved context. Prompt engineering mitigates but does not
+        eliminate this risk.
+    \item \textbf{Static knowledge base}: The retention strategies document is manually
+        curated and does not update automatically based on real-world outcome data.
+    \item \textbf{Single-telecom training data}: The model is trained exclusively on the
+        IBM Telco dataset; generalization to other telecom datasets or industries is untested.
+    \item \textbf{LLM latency}: The full agent pipeline takes 5--15 seconds, primarily due
+        to three sequential LLM calls. This is acceptable for a decision-support tool but
+        not for real-time use.
+    \item \textbf{No feedback loop}: The system does not track whether its recommendations
+        actually prevent churn, limiting its ability to improve over time.
+\end{enumerate}
