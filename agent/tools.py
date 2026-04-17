@@ -159,6 +159,19 @@ def predict_churn_tool(customer_features: dict) -> dict:
     return {"probability": prob, "prediction": pred, "risk_level": risk}
 
 
+_retriever = None
+
+
+def _get_retriever():
+    """Lazy-load RAG retriever on first use (avoids blocking on embeddings download)."""
+    global _retriever
+    if _retriever is None:
+        from rag.retriever import RetentionRetriever
+
+        _retriever = RetentionRetriever()
+    return _retriever
+
+
 @tool
 def retrieve_retention_strategies_tool(query: str) -> str:
     """Retrieve relevant retention strategies from the knowledge base.
@@ -169,9 +182,7 @@ def retrieve_retention_strategies_tool(query: str) -> str:
     Returns:
         Top 3 relevant chunks joined as a single string.
     """
-    from rag.retriever import RetentionRetriever
-
-    retriever = RetentionRetriever()
+    retriever = _get_retriever()
     chunks = retriever.retrieve(query, k=3)
     return "\n\n---\n\n".join(chunks)
 
