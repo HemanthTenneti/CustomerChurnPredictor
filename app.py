@@ -377,6 +377,7 @@ def _resolve_api_key(ui_key: str) -> tuple[str, str | None]:
     """
     env_key = os.getenv("GROQ_API_KEY", "")
     clean_ui = (ui_key or "").strip()
+    _risk_red = SVG["risk"].replace('stroke="currentColor"', 'stroke="#dc2626"')
 
     # 1. Try UI key first
     if clean_ui and clean_ui != "your_groq_api_key_here":
@@ -384,7 +385,6 @@ def _resolve_api_key(ui_key: str) -> tuple[str, str | None]:
             os.environ["GROQ_API_KEY"] = clean_ui
             return clean_ui, None
         # UI key invalid — warn and fall back
-        _risk_red = SVG["risk"].replace('stroke="currentColor"', 'stroke="#dc2626"')
         warning = (
             '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;'
             "padding:12px 18px;margin-bottom:16px;font-size:0.82rem;color:#991b1b;"
