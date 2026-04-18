@@ -619,11 +619,24 @@ css = """
     --col: #1f2937 !important;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+* { box-sizing: border-box; }
+*::before, *::after { box-sizing: border-box; }
 
-body, .gradio-container, gradio-app, .wrap {
+/* ── GLOBAL: Force white background everywhere ──────────────────────── */
+html, body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+body, .gradio-container, gradio-app, .wrap, main {
     background: #ffffff !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* ── Gradio prose class overrides inline color — force it dark ─────────── */
@@ -1001,9 +1014,9 @@ theme = gr.themes.Base(
     border_color_primary="#e5e7eb",
     border_color_primary_dark="#374151",
     background_fill_primary="#ffffff",
-    background_fill_primary_dark="#1f2937",
+    background_fill_primary_dark="#ffffff",  # Force white even in dark mode
     block_background_fill="#f9fafb",
-    block_background_fill_dark="#111827",
+    block_background_fill_dark="#f9fafb",  # Light gray blocks, not dark
 )
 
 
