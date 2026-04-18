@@ -5,3 +5,10 @@ __pycache__
 .env
 *.pyc
 .env.example
+
+# Binary files - managed by XET
+*.pkl
+*.pdf
+*.bin
+*.sqlite3
+rag/chroma_db/

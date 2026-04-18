@@ -1,0 +1,6 @@
+# XET filter for large binary files
+*.pkl filter=xet diff=xet merge=xet -text
+*.pdf filter=xet diff=xet merge=xet -text
+*.bin filter=xet diff=xet merge=xet -text
+*.sqlite3 filter=xet diff=xet merge=xet -text
+rag/chroma_db/ filter=xet diff=xet merge=xet -text
