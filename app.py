@@ -384,12 +384,13 @@ def _resolve_api_key(ui_key: str) -> tuple[str, str | None]:
             os.environ["GROQ_API_KEY"] = clean_ui
             return clean_ui, None
         # UI key invalid — warn and fall back
+        _risk_red = SVG["risk"].replace('stroke="currentColor"', 'stroke="#dc2626"')
         warning = (
             '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;'
             "padding:12px 18px;margin-bottom:16px;font-size:0.82rem;color:#991b1b;"
             'font-family:system-ui;display:flex;align-items:center;gap:10px;">'
-            f"{SVG['risk'].replace('stroke="currentColor"', 'stroke="#dc2626"')}"
-            "<div><b>Invalid API key</b> — rejected by Groq. "
+            + _risk_red
+            + "<div><b>Invalid API key</b> — rejected by Groq. "
             "Falling back to the server's "
             '<code style="background:#fee2e2;padding:2px 7px;border-radius:4px;'
             'font-size:0.78rem;">.env</code> key.</div></div>'
@@ -413,8 +414,8 @@ def _resolve_api_key(ui_key: str) -> tuple[str, str | None]:
             '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;'
             "padding:12px 18px;margin-bottom:16px;font-size:0.82rem;color:#991b1b;"
             'font-family:system-ui;display:flex;align-items:center;gap:10px;">'
-            f"{SVG['risk'].replace('stroke="currentColor"', 'stroke="#dc2626"')}"
-            "<div><b>Invalid API key</b> — the server's "
+            + _risk_red
+            + "<div><b>Invalid API key</b> — the server's "
             '<code style="background:#fee2e2;padding:2px 7px;border-radius:4px;'
             'font-size:0.78rem;">.env</code> '
             "key was also rejected. Please enter a valid Groq key above.</div></div>"
@@ -489,7 +490,7 @@ def run_agent_with_rag(
     rc = RISK_COLORS.get(risk, "#64748b")
 
     factors_html = ""
-    zap_icon = SVG["zap"].replace('stroke="currentColor"', f'stroke="{rc}"')
+    zap_icon = SVG["zap"].replace('stroke="currentColor"', 'stroke="' + rc + '"')
     for f in state.get("risk_factors", []):
         factors_html += (
             f'<span style="display:inline-flex;align-items:center;gap:5px;'
@@ -513,6 +514,13 @@ def run_agent_with_rag(
             f'<div style="flex:1;color:#1f2937;font-size:0.88rem;line-height:1.6;padding-top:5px;">{r}</div></div>'
         )
 
+    _icon_risk = SVG["risk"].replace('stroke="currentColor"', 'stroke="#5b21b6"')
+    _icon_brain = SVG["brain"].replace('stroke="currentColor"', 'stroke="#5b21b6"')
+    _icon_lightbulb = SVG["lightbulb"].replace(
+        'stroke="currentColor"', 'stroke="#5b21b6"'
+    )
+    _icon_target = SVG["target"].replace('stroke="currentColor"', 'stroke="#5b21b6"')
+
     output = f"""
     <div style="font-family:'Inter',system-ui,-apple-system,sans-serif;">
 
@@ -532,7 +540,7 @@ def run_agent_with_rag(
       <div style="margin-bottom:28px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;">
-          <span style="color:#5b21b6;display:flex;">{SVG["risk"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Identified Risk Factors
+          <span style="color:#5b21b6;display:flex;">{_icon_risk}</span> Identified Risk Factors
         </div>
         <div style="line-height:2.4;">{factors_html}</div>
       </div>
@@ -542,7 +550,7 @@ def run_agent_with_rag(
                   padding:24px;margin-bottom:28px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;">
-          <span style="color:#5b21b6;display:flex;">{SVG["brain"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Why This Customer Is at Risk
+          <span style="color:#5b21b6;display:flex;">{_icon_brain}</span> Why This Customer Is at Risk
         </div>
         <div style="color:#1f2937;font-size:0.92rem;line-height:1.75;">
           {state.get("explanation", "N/A")}
@@ -553,7 +561,7 @@ def run_agent_with_rag(
       <div style="margin-bottom:28px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.7rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;font-weight:600;">
-          <span style="color:#5b21b6;display:flex;">{SVG["lightbulb"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Recommended Retention Actions
+          <span style="color:#5b21b6;display:flex;">{_icon_lightbulb}</span> Recommended Retention Actions
         </div>
         {recs_html}
       </div>
@@ -563,7 +571,7 @@ def run_agent_with_rag(
                   padding:18px 24px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:8px;color:#6b7280;font-size:0.65rem;
                     text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:600;">
-          <span style="color:#5b21b6;display:flex;">{SVG["target"].replace('stroke="currentColor"', 'stroke="#5b21b6"')}</span> Executive Summary
+          <span style="color:#5b21b6;display:flex;">{_icon_target}</span> Executive Summary
         </div>
         <div style="color:#1f2937;font-size:0.9rem;line-height:1.65;font-style:italic;">
           {state.get("executive_summary", "N/A")}
@@ -1146,11 +1154,17 @@ def _build_input_tabs():
 # ══════════════════════════════════════════════════════════════════════════════
 with gr.Blocks(theme=theme, css=css, title="Customer Churn Predictor") as demo:
     # ── Header ────────────────────────────────────────────────────────────
+    _header_icon = (
+        SVG["agent"]
+        .replace('width="18"', 'width="26"')
+        .replace('height="18"', 'height="26"')
+        .replace('stroke="currentColor"', 'stroke="#fff"')
+    )
     gr.HTML(f"""
     <div id="app-header">
       <div style="width:48px;height:48px;margin:0 auto 14px;border-radius:14px;
                   background:#6366f1;display:flex;align-items:center;justify-content:center;">
-        {SVG["agent"].replace('width="18"', 'width="26"').replace('height="18"', 'height="26"').replace('stroke="currentColor"', 'stroke="#fff"')}
+        {_header_icon}
       </div>
       <h1>Customer Churn Predictor</h1>
       <p>Agentic AI &nbsp;&middot;&nbsp; LangGraph + RAG &nbsp;&middot;&nbsp; Groq LLM &nbsp;&middot;&nbsp; Telco Dataset</p>
