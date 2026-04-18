@@ -353,17 +353,21 @@ def _no_key_error(msg=""):
 
 
 def _validate_groq_key(key: str) -> bool:
-    """Lightweight check — call Groq's models endpoint to verify a key works."""
+    """Validate a Groq API key by calling the /v1/models endpoint."""
     if not key or key.strip() == "your_groq_api_key_here":
         return False
     try:
-        import urllib.request, json as _json
+        import urllib.request
 
         req = urllib.request.Request(
             "https://api.groq.com/openai/v1/models",
-            headers={"Authorization": f"Bearer {key.strip()}"},
+            headers={
+                "Authorization": f"Bearer {key.strip()}",
+                "Content-Type": "application/json",
+                "User-Agent": "CustomerChurnPredictor/1.0",
+            },
         )
-        with urllib.request.urlopen(req, timeout=8) as resp:
+        with urllib.request.urlopen(req, timeout=10) as resp:
             return resp.status == 200
     except Exception as e:
         print(f"[DEBUG] _validate_groq_key failed: {e}")
