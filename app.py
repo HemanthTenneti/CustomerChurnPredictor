@@ -24,6 +24,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# ── Ensure model & scaler exist (auto-rebuild on first deploy) ───────────
+if not os.path.exists("models/model.pkl"):
+    print("[BOOT] model.pkl not found — rebuilding from Dataset/churn.csv ...")
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, "rebuild_model.py"])
+    print("[BOOT] model.pkl rebuilt successfully.")
+
 model = joblib.load("models/model.pkl")[0]
 
 from scaler import build_scaler
