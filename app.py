@@ -365,7 +365,8 @@ def _validate_groq_key(key: str) -> bool:
         )
         with urllib.request.urlopen(req, timeout=8) as resp:
             return resp.status == 200
-    except Exception:
+    except Exception as e:
+        print(f"[DEBUG] _validate_groq_key failed: {e}")
         return False
 
 
@@ -378,6 +379,13 @@ def _resolve_api_key(ui_key: str) -> tuple[str, str | None]:
     env_key = os.getenv("GROQ_API_KEY", "")
     clean_ui = (ui_key or "").strip()
     _risk_red = SVG["risk"].replace('stroke="currentColor"', 'stroke="#dc2626"')
+    print(
+        f"[DEBUG] _resolve_api_key: ui_key='{clean_ui[:10]}...' env_key='{env_key[:10]}...'"
+        if clean_ui
+        else f"[DEBUG] _resolve_api_key: ui_key=EMPTY env_key='{env_key[:10]}...'"
+        if env_key
+        else "[DEBUG] _resolve_api_key: BOTH EMPTY"
+    )
 
     # 1. Try UI key first
     if clean_ui and clean_ui != "your_groq_api_key_here":
@@ -481,6 +489,9 @@ def run_agent_with_rag(
         get_agent = getattr(agent_module, "get_agent")
         state = get_agent().run(features)
     except Exception as exc:
+        import traceback
+
+        traceback.print_exc()
         return _no_key_error(str(exc))
     if state.get("error"):
         return _no_key_error(state["error"])
